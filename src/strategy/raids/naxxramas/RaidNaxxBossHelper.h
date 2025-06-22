@@ -126,8 +126,8 @@ public:
     {
         if (!GenericBossHelper::UpdateBossAI())
         {
-            if (_unit && TryFallback(_unit))
-                return true;
+            // if (_unit && SapphironTryFallback(_unit))
+            //     return true;
 
             return false;
         }
@@ -208,7 +208,7 @@ private:
     const uint32 EVENT_FLIGHT_INTERVAL = 45000;
     uint32 lastEventGround = 0;
 
-    bool TryFallback(Unit* boss)
+    bool SapphironTryFallback(Unit* boss)
     {
         return false; // Need to analyse crash here
         // if (!boss)
@@ -292,7 +292,7 @@ public:
     {
         if (!GenericBossHelper::UpdateBossAI())
         {
-            if (_unit && TryFallback(_unit))
+            if (_unit && HorsemenTryFallback(_unit))
                 return true;
 
             return false;
@@ -402,7 +402,7 @@ protected:
     uint32 voidZoneCounter = 0;
     int posToGo = 0;
 
-    bool TryFallback(Unit* boss)
+    bool HorsemenTryFallback(Unit* boss)
     {
         if (!boss)
         {
@@ -459,7 +459,7 @@ public:
     {
         if (!GenericBossHelper::UpdateBossAI())
         {
-            if (_unit && TryFallback(_unit))
+            if (_unit && ThaddiusTryFallback(_unit))
                 return true;
 
             return false;
@@ -512,7 +512,7 @@ protected:
     Unit* feugen = nullptr;
     Unit* stalagg = nullptr;
 
-    bool TryFallback(Unit* boss)
+    bool ThaddiusTryFallback(Unit* boss)
     {
         if (!boss)
         {
