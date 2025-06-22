@@ -70,6 +70,7 @@ bool HeiganDanceAction::CalculateSafe()
     {
         return false;
     }
+    uint32 curr_phase = 0;
     auto* boss_ai = dynamic_cast<Heigan::boss_heigan::boss_heiganAI*>(boss->GetAI());
     if (!boss_ai || boss_ai->events.Empty())
     {
@@ -106,7 +107,7 @@ bool HeiganDanceAction::CalculateSafe()
     }
 
     EventMap* eventMap = &boss_ai->events;
-    uint32 curr_phase = boss_ai->currentPhase;
+    curr_phase = boss_ai->currentPhase;
     uint32 curr_erupt = eventMap->GetNextEventTime(3);
     uint32 curr_dance = eventMap->GetNextEventTime(4);
     uint32 curr_timer = eventMap->GetTimer();
