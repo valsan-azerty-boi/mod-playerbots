@@ -18,11 +18,17 @@
 
 const uint32 NAXX_MAP_ID = 533;
 
-template <class BossAiType>
+class IBossAiType
+{
+public:
+    virtual ~IBossAiType() = default;
+    virtual EventMap* GetEventMap() = 0;
+};
+
 class GenericBossHelper : public AiObject
 {
 public:
-    GenericBossHelper(PlayerbotAI* botAI, std::string name) : AiObject(botAI), _name(name) {}
+    GenericBossHelper(PlayerbotAI* botAI, const std::string& name) : AiObject(botAI), _name(name) {}
     virtual bool UpdateBossAI()
     {
         if (!bot->IsInCombat())
@@ -45,12 +51,12 @@ public:
             {
                 return false;
             }
-            _ai = dynamic_cast<BossAiType*>(_target->GetAI());
-            if (!_ai)
+            CreatureAI* ai = _target->GetAI();
+            if (!ai)
             {
                 return false;
             }
-            _event_map = &_ai->events;
+            _event_map = ExtractEventMap(ai);
             if (!_event_map)
             {
                 return false;
@@ -67,7 +73,6 @@ public:
     {
         _unit = nullptr;
         _target = nullptr;
-        _ai = nullptr;
         _event_map = nullptr;
         _timer = 0;
     }
@@ -76,30 +81,56 @@ protected:
     std::string _name;
     Unit* _unit = nullptr;
     Creature* _target = nullptr;
-    BossAiType* _ai = nullptr;
     EventMap* _event_map = nullptr;
     uint32 _timer = 0;
+
+    EventMap* ExtractEventMap(CreatureAI* ai)
+    {
+        if (auto bossAI = dynamic_cast<IBossAiType*>(ai))
+            return bossAI->GetEventMap();
+
+        if (auto scriptedAI = dynamic_cast<ScriptedAI*>(ai))
+            return &scriptedAI->events;
+
+        return nullptr;
+    }
+
+    EventMap* GetEventMapFrom(Unit* unit)
+    {
+        if (!unit)
+            return nullptr;
+
+        Creature* creature = unit->ToCreature();
+        if (!creature)
+            return nullptr;
+
+        CreatureAI* ai = creature->GetAI();
+        if (!ai)
+            return nullptr;
+
+        return ExtractEventMap(ai);
+    }
 };
 
-class KelthuzadBossHelper : public GenericBossHelper<Kelthuzad::boss_kelthuzad::boss_kelthuzadAI>
+class KelthuzadBossHelper : public GenericBossHelper
 {
 public:
     KelthuzadBossHelper(PlayerbotAI* botAI) : GenericBossHelper(botAI, "kel'thuzad") {}
     const std::pair<float, float> center = {3716.19f, -5106.58f};
     const std::pair<float, float> tank_pos = {3709.19f, -5104.86f};
     const std::pair<float, float> assist_tank_pos = {3746.05f, -5112.74f};
-    bool IsPhaseOne() { return _event_map->GetNextEventTime(Kelthuzad::EVENT_PHASE_2) != 0; }
+    bool IsPhaseOne() { return _event_map && _event_map->GetNextEventTime(4) != 0; } // Kel'Thuzad EVENT_PHASE_2 = 4
     bool IsPhaseTwo() { return !IsPhaseOne(); }
     Unit* GetAnyShadowFissure()
     {
         Unit* shadow_fissure = nullptr;
         GuidVector units = *context->GetValue<GuidVector>("nearest triggers");
-        for (auto i = units.begin(); i != units.end(); i++)
+        for (auto& guid : units)
         {
-            Unit* unit = botAI->GetUnit(*i);
+            Unit* unit = botAI->GetUnit(guid);
             if (!unit)
                 continue;
-            if (botAI->EqualLowercaseName(unit->GetName(), "shadow fissure"))
+            if (unit && botAI->EqualLowercaseName(unit->GetName(), "shadow fissure"))
             {
                 shadow_fissure = unit;
             }
@@ -108,13 +139,13 @@ public:
     }
 };
 
-class RazuviousBossHelper : public GenericBossHelper<Razuvious::boss_razuvious::boss_razuviousAI>
+class RazuviousBossHelper : public GenericBossHelper
 {
 public:
     RazuviousBossHelper(PlayerbotAI* botAI) : GenericBossHelper(botAI, "instructor razuvious") {}
 };
 
-class SapphironBossHelper : public GenericBossHelper<Sapphiron::boss_sapphiron::boss_sapphironAI>
+class SapphironBossHelper : public GenericBossHelper
 {
 public:
     const std::pair<float, float> mainTankPos = {3512.07f, -5274.06f};
@@ -127,7 +158,7 @@ public:
         {
             return false;
         }
-        uint32 nextEventGround = _event_map->GetNextEventTime(Sapphiron::EVENT_GROUND);
+        uint32 nextEventGround = _event_map && _event_map->GetNextEventTime(13); // Sapphiron EVENT_GROUND = 13
         if (nextEventGround && nextEventGround != lastEventGround)
             lastEventGround = nextEventGround;
         return true;
@@ -136,10 +167,12 @@ public:
     bool IsPhaseFlight() { return !IsPhaseGround(); }
     bool JustLanded()
     {
-        return (_event_map->GetNextEventTime(Sapphiron::EVENT_FLIGHT_START) - _timer) >=
-               EVENT_FLIGHT_INTERVAL - POSITION_TIME_AFTER_LANDED;
+        if (!_event_map)
+            return false;
+        return (_event_map->GetNextEventTime(6) - _timer) >= // Sapphiron EVENT_FLIGHT_START = 6
+                (EVENT_FLIGHT_INTERVAL - POSITION_TIME_AFTER_LANDED);
     }
-    bool WaitForExplosion() { return _event_map->GetNextEventTime(Sapphiron::EVENT_FLIGHT_SPELL_EXPLOSION); }
+    bool WaitForExplosion() { return _event_map && _event_map->GetNextEventTime(10); } // Sapphiron EVENT_FLIGHT_SPELL_EXPLOSION = 10
     bool FindPosToAvoidChill(std::vector<float>& dest)
     {
         Aura* aura = botAI->GetAura("chill", bot);
@@ -205,7 +238,7 @@ private:
     uint32 lastEventGround = 0;
 };
 
-class GluthBossHelper : public GenericBossHelper<Gluth::boss_gluth::boss_gluthAI>
+class GluthBossHelper : public GenericBossHelper
 {
 public:
     const std::pair<float, float> mainTankPos25 = {3331.48f, -3109.06f};
@@ -220,13 +253,13 @@ public:
     GluthBossHelper(PlayerbotAI* botAI) : GenericBossHelper(botAI, "gluth") {}
     bool BeforeDecimate()
     {
-        uint32 decimate = _event_map->GetNextEventTime(Gluth::EVENT_DECIMATE);
+        uint32 decimate = _event_map && _event_map->GetNextEventTime(3); // Gluth EVENT_DECIMATE = 3
         return decimate && decimate - _timer <= 3000;
     }
     bool JustStartCombat() { return _timer < 10000; }
 };
 
-class LoathebBossHelper : public GenericBossHelper<Loatheb::boss_loatheb::boss_loathebAI>
+class LoathebBossHelper : public GenericBossHelper
 {
 public:
     const std::pair<float, float> mainTankPos = {2877.57f, -3967.00f};
@@ -234,7 +267,7 @@ public:
     LoathebBossHelper(PlayerbotAI* botAI) : GenericBossHelper(botAI, "loatheb") {}
 };
 
-class FourhorsemanBossHelper : public GenericBossHelper<FourHorsemen::boss_four_horsemen::boss_four_horsemenAI>
+class FourhorsemanBossHelper : public GenericBossHelper
 {
 public:
     const float posZ = 241.27f;
@@ -253,17 +286,12 @@ public:
         }
         sir = _unit;
         lady = AI_VALUE2(Unit*, "find target", "lady blaumeux");
-        if (!lady)
+        ladyEvent = GetEventMapFrom(lady);
+        if (!ladyEvent)
         {
             return true;
         }
-        ladyAI = dynamic_cast<FourHorsemen::boss_four_horsemen::boss_four_horsemenAI*>(lady->GetAI());
-        if (!ladyAI)
-        {
-            return true;
-        }
-        ladyEvent = &ladyAI->events;
-        const uint32 voidZone = ladyEvent->GetNextEventTime(FourHorsemen::EVENT_SECONDARY_SPELL);
+        const uint32 voidZone = ladyEvent->GetNextEventTime(3); // FourHorsemen EVENT_SECONDARY_SPELL = 3
         if (voidZone && lastEventVoidZone != voidZone)
         {
             voidZoneCounter++;
@@ -277,7 +305,6 @@ public:
         GenericBossHelper::Reset();
         sir = nullptr;
         lady = nullptr;
-        ladyAI = nullptr;
         ladyEvent = nullptr;
         lastEventVoidZone = 0;
         voidZoneCounter = 0;
@@ -286,7 +313,7 @@ public:
     bool IsAttracter(Player* bot)
     {
         Difficulty diff = bot->GetRaidDifficulty();
-        if (diff == RAID_DIFFICULTY_25MAN_NORMAL)
+        if (diff != RAID_DIFFICULTY_10MAN_NORMAL) // To handle 25man + Vanilla 40man from external modules
         {
             return botAI->IsRangedDpsAssistantOfIndex(bot, 0) || botAI->IsHealAssistantOfIndex(bot, 0) ||
                    botAI->IsHealAssistantOfIndex(bot, 1) || botAI->IsHealAssistantOfIndex(bot, 2);
@@ -295,7 +322,7 @@ public:
     }
     void CalculatePosToGo(Player* bot)
     {
-        bool raid25 = bot->GetRaidDifficulty() == RAID_DIFFICULTY_25MAN_NORMAL;
+        bool notRaid10 = bot->GetRaidDifficulty() != RAID_DIFFICULTY_10MAN_NORMAL; // To handle 25man + Vanilla 40man from external modules
         if (!lady)
         {
             posToGo = 0;
@@ -304,7 +331,7 @@ public:
         {
             // Interval: 24s - 15s - 15s - ...
             posToGo = !(_timer <= 9000 || ((_timer - 9000) / 67500) % 2 == 0);
-            if (botAI->IsRangedDpsAssistantOfIndex(bot, 0) || (raid25 && botAI->IsHealAssistantOfIndex(bot, 1)))
+            if (botAI->IsRangedDpsAssistantOfIndex(bot, 0) || (notRaid10 && botAI->IsHealAssistantOfIndex(bot, 1)))
             {
                 posToGo = 1 - posToGo;
             }
@@ -315,8 +342,8 @@ public:
         float posX = attractPos[posToGo].first, posY = attractPos[posToGo].second;
         if (posToGo == 1)
         {
-            float offset_x;
-            float offset_y;
+            float offset_x = 0.0f;
+            float offset_y = 0.0f;
             if (voidZoneCounter < 4)
             {
                 offset_x = voidZoneCounter * (-4.5f);
@@ -346,13 +373,13 @@ public:
 protected:
     Unit* sir = nullptr;
     Unit* lady = nullptr;
-    FourHorsemen::boss_four_horsemen::boss_four_horsemenAI* ladyAI = nullptr;
     EventMap* ladyEvent = nullptr;
     uint32 lastEventVoidZone = 0;
     uint32 voidZoneCounter = 0;
     int posToGo = 0;
 };
-class ThaddiusBossHelper : public GenericBossHelper<Thaddius::boss_thaddius::boss_thaddiusAI>
+
+class ThaddiusBossHelper : public GenericBossHelper
 {
 public:
     const std::pair<float, float> tankPosFeugen = {3522.94f, -3002.60f};
