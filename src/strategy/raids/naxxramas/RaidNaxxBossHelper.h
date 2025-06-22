@@ -217,6 +217,12 @@ private:
         //     return false;
         // } 
 
+        // if (!boss->IsCreature() || boss->GetEntry() != 351018) // Sapphiron entry mod-individual-progression
+        // {
+        //     // LOG_ERROR("PlayerBots", "SapphironTryFallback: boss is not Sapphiron");
+        //     return false;
+        // }
+
         // Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
         // if (!currentSpell)
         // {
@@ -410,6 +416,13 @@ protected:
             return false;
         } 
 
+        uint32 entry = boss->GetEntry();
+        if (!boss->IsCreature() || (entry != 351037 && entry != 351038 && entry != 351039 && entry != 351040)) // Horsemen entry mod-individual-progression
+        {
+            // LOG_ERROR("PlayerBots", "SapphironTryFallback: boss is not Sapphiron");
+            return false;
+        }
+
         Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
         if (!currentSpell)
         {
@@ -519,6 +532,12 @@ protected:
             // LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: called with null boss pointer");
             return false;
         } 
+
+        if (!boss->IsCreature() || boss->GetEntry() != 351000) // Thaddius entry mod-individual-progression
+        {
+            // LOG_ERROR("PlayerBots", "SapphironTryFallback: boss is not Sapphiron");
+            return false;
+        }
 
         Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
         if (!currentSpell)
