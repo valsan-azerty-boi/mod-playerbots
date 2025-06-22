@@ -210,44 +210,45 @@ private:
 
     bool TryFallback(Unit* boss)
     {
-        if (!boss)
-        {
-            LOG_ERROR("PlayerBots", "SapphironBossHelper TryFallback: called with null boss pointer");
-            return false;
-        } 
+        return false; // Need to analyse crash here
+        // if (!boss)
+        // {
+        //     // LOG_ERROR("PlayerBots", "SapphironBossHelper TryFallback: called with null boss pointer");
+        //     return false;
+        // } 
 
-        Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
-        if (!currentSpell)
-        {
-            LOG_ERROR("PlayerBots", "SapphironBossHelper TryFallback: boss has no current spell");
-            return false;
-        }
+        // Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
+        // if (!currentSpell)
+        // {
+        //     // LOG_ERROR("PlayerBots", "SapphironBossHelper TryFallback: boss has no current spell");
+        //     return false;
+        // }
 
-        if (!currentSpell->m_spellInfo)
-        {
-            LOG_ERROR("PlayerBots", "SapphironBossHelper TryFallback: currentSpell->m_spellInfo is null");
-            return false;
-        }
+        // if (!currentSpell->m_spellInfo)
+        // {
+        //     // LOG_ERROR("PlayerBots", "SapphironBossHelper TryFallback: currentSpell->m_spellInfo is null");
+        //     return false;
+        // }
 
-        assert(currentSpell && currentSpell->m_spellInfo);
+        // // assert(currentSpell && currentSpell->m_spellInfo);
 
-        uint32 spellId = currentSpell->m_spellInfo->Id;
-        switch (spellId)
-        {
-            case 19983:  // SPELL_CLEAVE
-            case 15847:  // SPELL_TAIL_SWEEP
-            case 55697:  // SPELL_TAIL_SWEEP_10
-            case 55696:  // SPELL_TAIL_SWEEP_25
-            case 28542:  // SPELL_LIFE_DRAIN_10
-            case 55665:  // SPELL_LIFE_DRAIN_25
-            case 28560:  // SPELL_SUMMON_BLIZZARD
-            case 28526:  // SPELL_ICEBOLT_CAST
-            case 28522:  // SPELL_ICEBOLT_TRIGGER
-            case 28524:  // SPELL_FROST_EXPLOSION
-                return true;
-            default:
-                return false;
-        }
+        // uint32 spellId = currentSpell->m_spellInfo->Id;
+        // switch (spellId)
+        // {
+        //     case 19983:  // SPELL_CLEAVE
+        //     case 15847:  // SPELL_TAIL_SWEEP
+        //     case 55697:  // SPELL_TAIL_SWEEP_10
+        //     case 55696:  // SPELL_TAIL_SWEEP_25
+        //     case 28542:  // SPELL_LIFE_DRAIN_10
+        //     case 55665:  // SPELL_LIFE_DRAIN_25
+        //     case 28560:  // SPELL_SUMMON_BLIZZARD
+        //     case 28526:  // SPELL_ICEBOLT_CAST
+        //     case 28522:  // SPELL_ICEBOLT_TRIGGER
+        //     case 28524:  // SPELL_FROST_EXPLOSION
+        //         return true;
+        //     default:
+        //         return false;
+        // }
     }
 };
 
@@ -405,24 +406,24 @@ protected:
     {
         if (!boss)
         {
-            LOG_ERROR("PlayerBots", "FourhorsemanBossHelper TryFallback: called with null boss pointer");
+            // LOG_ERROR("PlayerBots", "FourhorsemanBossHelper TryFallback: called with null boss pointer");
             return false;
         } 
 
         Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
         if (!currentSpell)
         {
-            LOG_ERROR("PlayerBots", "FourhorsemanBossHelper TryFallback: boss has no current spell");
+            // LOG_ERROR("PlayerBots", "FourhorsemanBossHelper TryFallback: boss has no current spell");
             return false;
         }
 
         if (!currentSpell->m_spellInfo)
         {
-            LOG_ERROR("PlayerBots", "FourhorsemanBossHelper TryFallback: currentSpell->m_spellInfo is null");
+            // LOG_ERROR("PlayerBots", "FourhorsemanBossHelper TryFallback: currentSpell->m_spellInfo is null");
             return false;
         }
 
-        assert(currentSpell && currentSpell->m_spellInfo);
+        // assert(currentSpell && currentSpell->m_spellInfo);
 
         uint32 spellId = currentSpell->m_spellInfo->Id;
         switch (spellId)
@@ -515,24 +516,24 @@ protected:
     {
         if (!boss)
         {
-            LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: called with null boss pointer");
+            // LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: called with null boss pointer");
             return false;
         } 
 
         Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
         if (!currentSpell)
         {
-            LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: boss has no current spell");
+            // LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: boss has no current spell");
             return false;
         }
 
         if (!currentSpell->m_spellInfo)
         {
-            LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: currentSpell->m_spellInfo is null");
+            // LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: currentSpell->m_spellInfo is null");
             return false;
         }
 
-        assert(currentSpell && currentSpell->m_spellInfo);
+        // assert(currentSpell && currentSpell->m_spellInfo);
 
         uint32 spellId = currentSpell->m_spellInfo->Id;
         switch (spellId)
