@@ -51,7 +51,7 @@ public:
             {
                 return false;
             }
-            CreatureAI* ai = _target->GetAI();
+            CreatureAI* ai = dynamic_cast<CreatureAI*>(_target->GetAI());
             if (!ai)
             {
                 return false;
