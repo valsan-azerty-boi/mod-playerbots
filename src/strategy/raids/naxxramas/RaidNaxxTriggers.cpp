@@ -36,6 +36,10 @@ bool BossEventTrigger<T>::IsActive()
         return false;
     }
     T* ai = dynamic_cast<T*>(boss->GetAI());
+    if (!ai)
+    {
+        return false;
+    }
     EventMap* eventMap = &ai->events;
     if (!eventMap)
     {
@@ -52,8 +56,8 @@ bool BossEventTrigger<T>::IsActive()
 
 bool GrobbulusCloudTrigger::IsActive()
 {
-    Unit* boss = AI_VALUE(Unit*, "boss target");
-    if (!boss || boss->GetEntry() != boss_entry)
+    Unit* boss = AI_VALUE2(Unit*, "boss target", "grobbulus");
+    if (!boss)
     {
         return false;
     }

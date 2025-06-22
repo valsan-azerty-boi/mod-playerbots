@@ -125,6 +125,9 @@ public:
     {
         if (!GenericBossHelper::UpdateBossAI())
         {
+            if (_unit && TryFallback(_unit))
+                return true;
+
             return false;
         }
         uint32 nextEventGround = _event_map->GetNextEventTime(Sapphiron::EVENT_GROUND);
@@ -203,6 +206,35 @@ private:
     const uint32 POSITION_TIME_AFTER_LANDED = 5000;
     const uint32 EVENT_FLIGHT_INTERVAL = 45000;
     uint32 lastEventGround = 0;
+
+    bool TryFallback(Unit* boss)
+    {
+        if (!boss)
+            return false;
+
+        Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
+        if (!currentSpell)
+            return false;
+
+        uint32 spellId = currentSpell->m_spellInfo->Id;
+        switch (spellId)
+        {
+            case 26662:  // SPELL_BERSERK
+            case 19983:  // SPELL_CLEAVE
+            case 15847:  // SPELL_TAIL_SWEEP
+            case 55697:  // SPELL_TAIL_SWEEP_10
+            case 55696:  // SPELL_TAIL_SWEEP_25
+            case 28542:  // SPELL_LIFE_DRAIN_10
+            case 55665:  // SPELL_LIFE_DRAIN_25
+            case 28560:  // SPELL_SUMMON_BLIZZARD
+            case 28526:  // SPELL_ICEBOLT_CAST
+            case 28522:  // SPELL_ICEBOLT_TRIGGER
+            case 28524:  // SPELL_FROST_EXPLOSION
+                return true;
+            default:
+                return false;
+        }
+    }
 };
 
 class GluthBossHelper : public GenericBossHelper<Gluth::boss_gluth::boss_gluthAI>
@@ -245,6 +277,9 @@ public:
     {
         if (!GenericBossHelper::UpdateBossAI())
         {
+            if (_unit && TryFallback(_unit))
+                return true;
+
             return false;
         }
         if (!bot->IsInCombat())
@@ -286,7 +321,7 @@ public:
     bool IsAttracter(Player* bot)
     {
         Difficulty diff = bot->GetRaidDifficulty();
-        if (diff == RAID_DIFFICULTY_25MAN_NORMAL)
+        if (diff != RAID_DIFFICULTY_10MAN_NORMAL)
         {
             return botAI->IsRangedDpsAssistantOfIndex(bot, 0) || botAI->IsHealAssistantOfIndex(bot, 0) ||
                    botAI->IsHealAssistantOfIndex(bot, 1) || botAI->IsHealAssistantOfIndex(bot, 2);
@@ -295,7 +330,7 @@ public:
     }
     void CalculatePosToGo(Player* bot)
     {
-        bool raid25 = bot->GetRaidDifficulty() == RAID_DIFFICULTY_25MAN_NORMAL;
+        bool raid25 = bot->GetRaidDifficulty() != RAID_DIFFICULTY_10MAN_NORMAL;
         if (!lady)
         {
             posToGo = 0;
@@ -351,7 +386,38 @@ protected:
     uint32 lastEventVoidZone = 0;
     uint32 voidZoneCounter = 0;
     int posToGo = 0;
+
+    bool TryFallback(Unit* boss)
+    {
+        if (!boss)
+            return false;
+
+        Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
+        if (!currentSpell)
+            return false;
+
+        uint32 spellId = currentSpell->m_spellInfo->Id;
+        switch (spellId)
+        {
+            case 28832: // SPELL_MARK_OF_KORTHAZZ
+            case 28833: // SPELL_MARK_OF_BLAUMEUX
+            case 28834: // SPELL_MARK_OF_MOGRAINE
+            case 28835: // SPELL_MARK_OF_ZELIEK
+            case 28884: // SPELL_KORTHAZZ_METEOR
+            case 57374: // SPELL_BLAUMEUX_SHADOW_BOLT
+            case 28863: // SPELL_BLAUMEUX_VOID_ZONE
+            case 28883: // SPELL_ZELIEK_HOLY_WRATH
+            case 57376: // SPELL_ZELIEK_HOLY_BOLT
+            case 28882: // SPELL_RIVENDARE_UNHOLY_SHADOW
+            case 26662: // SPELL_BERSERK
+            case 29061: // SPELL_SHIELDWALL
+                return true;
+            default:
+                return false;
+        }
+    }
 };
+
 class ThaddiusBossHelper : public GenericBossHelper<Thaddius::boss_thaddius::boss_thaddiusAI>
 {
 public:
@@ -365,6 +431,9 @@ public:
     {
         if (!GenericBossHelper::UpdateBossAI())
         {
+            if (_unit && TryFallback(_unit))
+                return true;
+
             return false;
         }
         feugen = AI_VALUE2(Unit*, "find target", "feugen");
@@ -414,6 +483,27 @@ public:
 protected:
     Unit* feugen = nullptr;
     Unit* stalagg = nullptr;
+
+    bool TryFallback(Unit* boss)
+    {
+        if (!boss)
+            return false;
+
+        Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
+        if (!currentSpell)
+            return false;
+
+        uint32 spellId = currentSpell->m_spellInfo->Id;
+        switch (spellId)
+        {
+            case 28089: // SPELL_POLARITY_SHIFT
+            case 28299: // SPELL_BALL_LIGHTNING
+            case 28167: // SPELL_CHAIN_LIGHTNING
+                return true;
+            default:
+                return false;
+        }
+    }
 };
 
 #endif

@@ -54,7 +54,9 @@ uint32 GrobbulusRotateAction::GetCurrWaypoint()
     auto* boss_ai = dynamic_cast<Grobbulus::boss_grobbulus::boss_grobbulusAI*>(boss->GetAI());
     if (!boss_ai || boss_ai->events.Empty())
     {
-        return false;
+        static uint32 fallbackWaypoint = 0;
+        fallbackWaypoint = (fallbackWaypoint + 1) % intervals;
+        return fallbackWaypoint;
     }
     EventMap* eventMap = &boss_ai->events;
     const uint32 event_time = eventMap->GetNextEventTime(2);
@@ -71,8 +73,38 @@ bool HeiganDanceAction::CalculateSafe()
     auto* boss_ai = dynamic_cast<Heigan::boss_heigan::boss_heiganAI*>(boss->GetAI());
     if (!boss_ai || boss_ai->events.Empty())
     {
-        return false;
+        Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
+        if (currentSpell)
+        {
+            uint32 spellId = currentSpell->m_spellInfo->Id;
+
+            if (spellId == SPELL_ERUPTION)
+            {
+                uint32 eruptId = boss->GetUInt32Value(UNIT_FIELD_CHANNEL_OBJECT);
+                if (eruptId != prev_erupt)
+                {
+                    NextSafe();
+                    prev_erupt = eruptId;
+                }
+                curr_phase = 1;
+            }
+            else
+            {
+                curr_phase = 0;
+                ResetSafe();
+                prev_erupt = 0;
+            }
+        }
+        else
+        {
+            curr_phase = 0;
+            ResetSafe();
+            prev_erupt = 0;
+        }
+        prev_phase = curr_phase;
+        return true;
     }
+
     EventMap* eventMap = &boss_ai->events;
     uint32 curr_phase = boss_ai->currentPhase;
     uint32 curr_erupt = eventMap->GetNextEventTime(3);
@@ -967,7 +999,7 @@ bool GluthPositionAction::Execute(Event event)
     {
         return false;
     }
-    bool raid25 = bot->GetRaidDifficulty() == RAID_DIFFICULTY_25MAN_NORMAL;
+    bool raid25 = bot->GetRaidDifficulty() != RAID_DIFFICULTY_10MAN_NORMAL;
     if (botAI->IsMainTank(bot) || botAI->IsAssistTankOfIndex(bot, 0))
     {
         if (AI_VALUE2(bool, "has aggro", "boss target"))
@@ -1032,7 +1064,7 @@ bool GluthSlowdownAction::Execute(Event event)
     {
         return false;
     }
-    bool raid25 = bot->GetRaidDifficulty() == RAID_DIFFICULTY_25MAN_NORMAL;
+    bool raid25 = bot->GetRaidDifficulty() != RAID_DIFFICULTY_10MAN_NORMAL;
     if (!raid25)
     {
         return false;
