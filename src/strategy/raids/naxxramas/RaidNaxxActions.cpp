@@ -12,7 +12,7 @@
 
 bool GrobbulusGoBehindAction::Execute(Event event)
 {
-    Unit* boss = AI_VALUE(Unit*, "boss target");
+    Unit* boss = AI_VALUE2(Unit*, "boss target", "grobbulus");
     if (!boss)
     {
         return false;
@@ -54,9 +54,12 @@ uint32 GrobbulusRotateAction::GetCurrWaypoint()
     auto* boss_ai = dynamic_cast<Grobbulus::boss_grobbulus::boss_grobbulusAI*>(boss->GetAI());
     if (!boss_ai || boss_ai->events.Empty())
     {
-        static uint32 fallbackWaypoint = 0;
-        fallbackWaypoint = (fallbackWaypoint + 1) % intervals;
-        return fallbackWaypoint;
+        uint32 now = GetMSTime();
+        if (now - lastFallbackSwitch >= 10000)
+        {
+            fallbackWaypoint = (fallbackWaypoint + 1) % intervals;
+            lastFallbackSwitch = now;
+        }
     }
     EventMap* eventMap = &boss_ai->events;
     const uint32 event_time = eventMap->GetNextEventTime(2);
@@ -74,6 +77,7 @@ bool HeiganDanceAction::CalculateSafe()
     auto* boss_ai = dynamic_cast<Heigan::boss_heigan::boss_heiganAI*>(boss->GetAI());
     if (!boss_ai || boss_ai->events.Empty())
     {
+        uint32 now = getMSTime();
         Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
         if (currentSpell)
         {
@@ -82,10 +86,11 @@ bool HeiganDanceAction::CalculateSafe()
             if (spellId == SPELL_ERUPTION)
             {
                 uint32 eruptId = boss->GetUInt32Value(UNIT_FIELD_CHANNEL_OBJECT);
-                if (eruptId != prev_erupt)
+                if (eruptId != prev_erupt && now >= nextSafeTime)
                 {
                     NextSafe();
                     prev_erupt = eruptId;
+                    nextSafeTime = now + 5000;
                 }
                 curr_phase = 1;
             }

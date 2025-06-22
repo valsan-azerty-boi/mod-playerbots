@@ -48,6 +48,9 @@ public:
                AI_VALUE2(bool, "has aggro", "boss target");
     }
     uint32 GetCurrWaypoint() override;
+private:
+    uint32 fallbackWaypoint = 0;
+    uint32 lastFallbackSwitch = 0;
 };
 
 class GrobblulusMoveCenterAction : public MoveInsideAction
@@ -89,6 +92,9 @@ protected:
     uint32 prev_phase, prev_erupt, prev_timer;
     uint32 curr_safe, curr_dir;
     std::vector<std::pair<float, float>> waypoints;
+
+private:
+    uint32 nextSafeTime = 0;
 };
 
 class HeiganDanceMeleeAction : public HeiganDanceAction

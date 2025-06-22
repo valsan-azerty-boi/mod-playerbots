@@ -335,8 +335,8 @@ float GluthGenericMultiplier::GetValue(Action* action)
     }
     if (dynamic_cast<PetAttackAction*>(action))
     {
-        Unit* target = AI_VALUE(Unit*, "current target");
-        if (target && target->GetEntry() == Gluth::NPC_ZOMBIE_CHOW)
+        Unit* target = AI_VALUE2(Unit*, "current target", "zombie chow");
+        if (target)
         {
             return 0.0f;
         }
