@@ -54,7 +54,7 @@ uint32 GrobbulusRotateAction::GetCurrWaypoint()
     auto* boss_ai = dynamic_cast<Grobbulus::boss_grobbulus::boss_grobbulusAI*>(boss->GetAI());
     if (!boss_ai || boss_ai->events.Empty())
     {
-        uint32 now = GetMSTime();
+        uint32 now = getMSTime();
         if (now - lastFallbackSwitch >= 10000)
         {
             fallbackWaypoint = (fallbackWaypoint + 1) % intervals;
