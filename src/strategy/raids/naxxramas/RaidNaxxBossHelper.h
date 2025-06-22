@@ -210,16 +210,29 @@ private:
     bool TryFallback(Unit* boss)
     {
         if (!boss)
+        {
+            sLog->outError(LOG_FILTER_GENERAL, "SapphironBossHelper TryFallback: called with null boss pointer");
             return false;
+        } 
 
         Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
         if (!currentSpell)
+        {
+            sLog->outError(LOG_FILTER_GENERAL, "SapphironBossHelper TryFallback: boss has no current spell");
             return false;
+        }
+
+        if (!currentSpell->m_spellInfo)
+        {
+            sLog->outError(LOG_FILTER_GENERAL, "SapphironBossHelper TryFallback: currentSpell->m_spellInfo is null");
+            return false;
+        }
+
+        assert(currentSpell && currentSpell->m_spellInfo);
 
         uint32 spellId = currentSpell->m_spellInfo->Id;
         switch (spellId)
         {
-            case 26662:  // SPELL_BERSERK
             case 19983:  // SPELL_CLEAVE
             case 15847:  // SPELL_TAIL_SWEEP
             case 55697:  // SPELL_TAIL_SWEEP_10
@@ -390,11 +403,25 @@ protected:
     bool TryFallback(Unit* boss)
     {
         if (!boss)
+        {
+            sLog->outError(LOG_FILTER_GENERAL, "FourhorsemanBossHelper TryFallback: called with null boss pointer");
             return false;
+        } 
 
         Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
         if (!currentSpell)
+        {
+            sLog->outError(LOG_FILTER_GENERAL, "FourhorsemanBossHelper TryFallback: boss has no current spell");
             return false;
+        }
+
+        if (!currentSpell->m_spellInfo)
+        {
+            sLog->outError(LOG_FILTER_GENERAL, "FourhorsemanBossHelper TryFallback: currentSpell->m_spellInfo is null");
+            return false;
+        }
+
+        assert(currentSpell && currentSpell->m_spellInfo);
 
         uint32 spellId = currentSpell->m_spellInfo->Id;
         switch (spellId)
@@ -409,7 +436,6 @@ protected:
             case 28883: // SPELL_ZELIEK_HOLY_WRATH
             case 57376: // SPELL_ZELIEK_HOLY_BOLT
             case 28882: // SPELL_RIVENDARE_UNHOLY_SHADOW
-            case 26662: // SPELL_BERSERK
             case 29061: // SPELL_SHIELDWALL
                 return true;
             default:
@@ -487,11 +513,25 @@ protected:
     bool TryFallback(Unit* boss)
     {
         if (!boss)
+        {
+            sLog->outError(LOG_FILTER_GENERAL, "ThaddiusBossHelper TryFallback: called with null boss pointer");
             return false;
+        } 
 
         Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
         if (!currentSpell)
+        {
+            sLog->outError(LOG_FILTER_GENERAL, "ThaddiusBossHelper TryFallback: boss has no current spell");
             return false;
+        }
+
+        if (!currentSpell->m_spellInfo)
+        {
+            sLog->outError(LOG_FILTER_GENERAL, "ThaddiusBossHelper TryFallback: currentSpell->m_spellInfo is null");
+            return false;
+        }
+
+        assert(currentSpell && currentSpell->m_spellInfo);
 
         uint32 spellId = currentSpell->m_spellInfo->Id;
         switch (spellId)
