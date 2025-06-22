@@ -18,13 +18,6 @@
 
 const uint32 NAXX_MAP_ID = 533;
 
-class IBossAiType
-{
-public:
-    virtual ~IBossAiType() = default;
-    virtual EventMap* GetEventMap() = 0;
-};
-
 class GenericBossHelper : public AiObject
 {
 public:
@@ -86,8 +79,8 @@ protected:
 
     EventMap* ExtractEventMap(CreatureAI* ai)
     {
-        if (auto bossAI = dynamic_cast<IBossAiType*>(ai))
-            return bossAI->GetEventMap();
+        if (!ai)
+            return nullptr;
 
         if (auto scriptedAI = dynamic_cast<ScriptedAI*>(ai))
             return &scriptedAI->events;
