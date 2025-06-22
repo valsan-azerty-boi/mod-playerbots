@@ -6,6 +6,7 @@
 #include "AiObject.h"
 #include "AiObjectContext.h"
 #include "EventMap.h"
+#include "Errors.h"
 #include "Log.h"
 #include "NamedObjectContext.h"
 #include "ObjectGuid.h"
@@ -211,20 +212,20 @@ private:
     {
         if (!boss)
         {
-            sLog->outError(LOG_FILTER_GENERAL, "SapphironBossHelper TryFallback: called with null boss pointer");
+            LOG_ERROR("PlayerBots", "SapphironBossHelper TryFallback: called with null boss pointer");
             return false;
         } 
 
         Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
         if (!currentSpell)
         {
-            sLog->outError(LOG_FILTER_GENERAL, "SapphironBossHelper TryFallback: boss has no current spell");
+            LOG_ERROR("PlayerBots", "SapphironBossHelper TryFallback: boss has no current spell");
             return false;
         }
 
         if (!currentSpell->m_spellInfo)
         {
-            sLog->outError(LOG_FILTER_GENERAL, "SapphironBossHelper TryFallback: currentSpell->m_spellInfo is null");
+            LOG_ERROR("PlayerBots", "SapphironBossHelper TryFallback: currentSpell->m_spellInfo is null");
             return false;
         }
 
@@ -404,20 +405,20 @@ protected:
     {
         if (!boss)
         {
-            sLog->outError(LOG_FILTER_GENERAL, "FourhorsemanBossHelper TryFallback: called with null boss pointer");
+            LOG_ERROR("PlayerBots", "FourhorsemanBossHelper TryFallback: called with null boss pointer");
             return false;
         } 
 
         Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
         if (!currentSpell)
         {
-            sLog->outError(LOG_FILTER_GENERAL, "FourhorsemanBossHelper TryFallback: boss has no current spell");
+            LOG_ERROR("PlayerBots", "FourhorsemanBossHelper TryFallback: boss has no current spell");
             return false;
         }
 
         if (!currentSpell->m_spellInfo)
         {
-            sLog->outError(LOG_FILTER_GENERAL, "FourhorsemanBossHelper TryFallback: currentSpell->m_spellInfo is null");
+            LOG_ERROR("PlayerBots", "FourhorsemanBossHelper TryFallback: currentSpell->m_spellInfo is null");
             return false;
         }
 
@@ -514,20 +515,20 @@ protected:
     {
         if (!boss)
         {
-            sLog->outError(LOG_FILTER_GENERAL, "ThaddiusBossHelper TryFallback: called with null boss pointer");
+            LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: called with null boss pointer");
             return false;
         } 
 
         Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
         if (!currentSpell)
         {
-            sLog->outError(LOG_FILTER_GENERAL, "ThaddiusBossHelper TryFallback: boss has no current spell");
+            LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: boss has no current spell");
             return false;
         }
 
         if (!currentSpell->m_spellInfo)
         {
-            sLog->outError(LOG_FILTER_GENERAL, "ThaddiusBossHelper TryFallback: currentSpell->m_spellInfo is null");
+            LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: currentSpell->m_spellInfo is null");
             return false;
         }
 
