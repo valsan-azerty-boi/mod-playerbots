@@ -27,21 +27,30 @@ bool MutatingInjectionRemovedTrigger::IsActive()
     return HasNoAuraTrigger::IsActive() && botAI->GetState() == BOT_STATE_COMBAT && botAI->IsRanged(bot);
 }
 
-template <class T>
-bool BossEventTrigger<T>::IsActive()
+bool BossEventTrigger::IsActive()
 {
-    Unit* boss = AI_VALUE(Unit*, "boss target");
-    if (!boss || boss->GetEntry() != boss_entry)
+    Unit* boss = AI_VALUE2(Unit*, "boss target", boss_name);
+    if (!boss)
     {
         return false;
     }
-    T* ai = dynamic_cast<T*>(boss->GetAI());
+    Creature* creature = boss->ToCreature();
+    if (!creature)
+    {
+        return false;
+    }
+    auto creatureAi = creature->AI();
+    if (!creatureAi)
+    {
+        return false;
+    }
+    ScriptedAI* ai = dynamic_cast<ScriptedAI*>(creatureAi);
+    if (!ai || ai->events.Empty())
+    {
+        return false;
+    }
     EventMap* eventMap = &ai->events;
-    if (!eventMap)
-    {
-        return false;
-    }
-    const uint32 event_time = eventMap->GetNextEventTime(event_id);
+    uint32 event_time = eventMap->GetNextEventTime(event_id);
     if (event_time != last_event_time)
     {
         last_event_time = event_time;
@@ -52,8 +61,8 @@ bool BossEventTrigger<T>::IsActive()
 
 bool GrobbulusCloudTrigger::IsActive()
 {
-    Unit* boss = AI_VALUE(Unit*, "boss target");
-    if (!boss || boss->GetEntry() != boss_entry)
+    Unit* boss = AI_VALUE2(Unit*, "boss target", "grobbulus");
+    if (!boss)
     {
         return false;
     }
@@ -63,7 +72,7 @@ bool GrobbulusCloudTrigger::IsActive()
     }
     // bot->Yell("has aggro on " + boss->GetName() + " : " + to_string(AI_VALUE2(bool, "has aggro", "boss target")),
     // LANG_UNIVERSAL);
-    return AI_VALUE2(bool, "has aggro", "boss target");
+    return botAI->HasAggro(boss);
 }
 
 bool HeiganMeleeTrigger::IsActive()
@@ -206,5 +215,3 @@ bool ThaddiusPhaseThaddiusTrigger::IsActive()
     }
     return helper.IsPhaseThaddius();
 }
-
-template bool BossEventTrigger<Grobbulus::boss_grobbulus::boss_grobbulusAI>::IsActive();

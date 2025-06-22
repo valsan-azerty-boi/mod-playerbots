@@ -12,7 +12,7 @@
 
 bool GrobbulusGoBehindAction::Execute(Event event)
 {
-    Unit* boss = AI_VALUE(Unit*, "boss target");
+    Unit* boss = AI_VALUE2(Unit*, "boss target", "grobbulus");
     if (!boss)
     {
         return false;
@@ -46,12 +46,22 @@ uint32 RotateAroundTheCenterPointAction::FindNearestWaypoint()
 
 uint32 GrobbulusRotateAction::GetCurrWaypoint()
 {
-    Unit* boss = AI_VALUE(Unit*, "boss target");
+    Unit* boss = AI_VALUE2(Unit*, "boss target", "grobbulus");
     if (!boss)
     {
         return false;
     }
-    auto* boss_ai = dynamic_cast<Grobbulus::boss_grobbulus::boss_grobbulusAI*>(boss->GetAI());
+    Creature* creature = boss->ToCreature();
+    if (!creature)
+    {
+        return false;
+    }
+    auto* ai = creature->AI();
+    if (!ai)
+    {
+        return false;
+    }
+    ScriptedAI* boss_ai = dynamic_cast<ScriptedAI*>(ai);
     if (!boss_ai || boss_ai->events.Empty())
     {
         return false;
@@ -68,16 +78,32 @@ bool HeiganDanceAction::CalculateSafe()
     {
         return false;
     }
-    auto* boss_ai = dynamic_cast<Heigan::boss_heigan::boss_heiganAI*>(boss->GetAI());
+    Creature* creature = boss->ToCreature();
+    if (!creature)
+    {
+        return false;
+    }
+    auto* ai = creature->AI();
+    if (!ai)
+    {
+        return false;
+    }
+    ScriptedAI* boss_ai = dynamic_cast<ScriptedAI*>(ai);
     if (!boss_ai || boss_ai->events.Empty())
     {
         return false;
     }
     EventMap* eventMap = &boss_ai->events;
-    uint32 curr_phase = boss_ai->currentPhase;
+    uint32 curr_phase = 0; // Default phase PHASE_SLOW_DANCE = 0
     uint32 curr_erupt = eventMap->GetNextEventTime(3);
     uint32 curr_dance = eventMap->GetNextEventTime(4);
     uint32 curr_timer = eventMap->GetTimer();
+    if (curr_erupt != 0)
+    {
+        int32 delta = int32(curr_erupt) - int32(curr_timer);
+        if (delta >= 0 && delta < 5000)
+            curr_phase = 1 ; // PHASE_FAST_DANCE = 1
+    }
     if ((curr_phase == 0 && curr_dance - curr_timer >= 85000) || (curr_phase == 1 && curr_dance - curr_timer >= 40000))
     {
         ResetSafe();
@@ -967,12 +993,12 @@ bool GluthPositionAction::Execute(Event event)
     {
         return false;
     }
-    bool raid25 = bot->GetRaidDifficulty() == RAID_DIFFICULTY_25MAN_NORMAL;
+    bool notRaid10 = bot->GetRaidDifficulty() != RAID_DIFFICULTY_10MAN_NORMAL; // To handle 25man + Vanilla 40man from external modules
     if (botAI->IsMainTank(bot) || botAI->IsAssistTankOfIndex(bot, 0))
     {
         if (AI_VALUE2(bool, "has aggro", "boss target"))
         {
-            if (raid25)
+            if (notRaid10)
             {
                 return MoveTo(NAXX_MAP_ID, helper.mainTankPos25.first, helper.mainTankPos25.second,
                               bot->GetPositionZ(), false, false, false, false, MovementPriority::MOVEMENT_COMBAT);
@@ -1004,7 +1030,7 @@ bool GluthPositionAction::Execute(Event event)
     }
     else if (botAI->IsRangedDps(bot))
     {
-        if (raid25)
+        if (notRaid10)
         {
             if (botAI->GetClassIndex(bot, CLASS_HUNTER) == 0)
             {
@@ -1032,8 +1058,8 @@ bool GluthSlowdownAction::Execute(Event event)
     {
         return false;
     }
-    bool raid25 = bot->GetRaidDifficulty() == RAID_DIFFICULTY_25MAN_NORMAL;
-    if (!raid25)
+    bool notRaid10 = bot->GetRaidDifficulty() != RAID_DIFFICULTY_10MAN_NORMAL; // To handle 25man + Vanilla 40man from external modules
+    if (!notRaid10)
     {
         return false;
     }

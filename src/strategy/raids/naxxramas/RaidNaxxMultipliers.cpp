@@ -41,23 +41,45 @@ float HeiganDanceMultiplier::GetValue(Action* action)
     {
         return 1.0f;
     }
-    auto* boss_ai = dynamic_cast<Heigan::boss_heigan::boss_heiganAI*>(boss->GetAI());
+    Creature* creature = boss->ToCreature();
+    if (!creature)
+    {
+        return 1.0f;
+    }
+    auto* ai = creature->AI();
+    if (!ai)
+    {
+        return 1.0f;
+    }
+    ScriptedAI* boss_ai = dynamic_cast<ScriptedAI*>(ai);
     if (!boss_ai || boss_ai->events.Empty())
     {
         return 1.0f;
     }
     EventMap* eventMap = &boss_ai->events;
-    uint32 curr_phase = boss_ai->currentPhase;
+    if (eventMap->Empty())
+    {
+        return 1.0f;
+    }
+    uint32 curr_phase = 0; // Default phase PHASE_SLOW_DANCE = 0
     uint32 curr_dance = eventMap->GetNextEventTime(4);
     uint32 curr_timer = eventMap->GetTimer();
     uint32 curr_erupt = eventMap->GetNextEventTime(3);
+
+    if (curr_erupt != 0)
+    {
+        int32 delta = int32(curr_erupt) - int32(curr_timer);
+        if (delta >= 0 && delta < 5000)
+            curr_phase = 1 ; // PHASE_FAST_DANCE = 1
+    }
+
     if (dynamic_cast<CombatFormationMoveAction*>(action) ||
         dynamic_cast<CastDisengageAction*>(action) ||
         dynamic_cast<CastBlinkBackAction*>(action) )
     {
         return 0.0f;
     }
-    if (curr_phase != 1 && (int32)curr_dance - curr_timer >= 3000)
+    if (curr_phase != 1 && ((int32)(curr_dance - curr_timer) >= 3000))
     {
         return 1.0f;
     }
@@ -308,8 +330,8 @@ float GluthGenericMultiplier::GetValue(Action* action)
     }
     if (dynamic_cast<PetAttackAction*>(action))
     {
-        Unit* target = AI_VALUE(Unit*, "current target");
-        if (target && target->GetEntry() == Gluth::NPC_ZOMBIE_CHOW)
+        Unit* target = AI_VALUE2(Unit*, "current target", "zombie chow");
+        if (target)
         {
             return 0.0f;
         }
