@@ -13,7 +13,7 @@
 bool GrobbulusGoBehindAction::Execute(Event event)
 {
     Unit* boss = AI_VALUE2(Unit*, "boss target", "grobbulus");
-    if (!boss)
+    if (!boss || boss->isDead())
     {
         return false;
     }
@@ -47,7 +47,7 @@ uint32 RotateAroundTheCenterPointAction::FindNearestWaypoint()
 uint32 GrobbulusRotateAction::GetCurrWaypoint()
 {
     Unit* boss = AI_VALUE(Unit*, "boss target");
-    if (!boss)
+    if (!boss || boss->isDead())
     {
         return false;
     }
@@ -55,11 +55,12 @@ uint32 GrobbulusRotateAction::GetCurrWaypoint()
     if (!boss_ai || boss_ai->events.Empty())
     {
         uint32 now = getMSTime();
-        if (now - lastFallbackSwitch >= 10000)
+        if (now - lastFallbackSwitch >= 15000)
         {
             fallbackWaypoint = (fallbackWaypoint + 1) % intervals;
             lastFallbackSwitch = now;
         }
+        return fallbackWaypoint;
     }
     EventMap* eventMap = &boss_ai->events;
     const uint32 event_time = eventMap->GetNextEventTime(2);
@@ -69,50 +70,27 @@ uint32 GrobbulusRotateAction::GetCurrWaypoint()
 bool HeiganDanceAction::CalculateSafe()
 {
     Unit* boss = AI_VALUE2(Unit*, "find target", "heigan the unclean");
-    if (!boss)
+    if (!boss || boss->isDead())
     {
         return false;
     }
-    uint32 curr_phase = 0;
     auto* boss_ai = dynamic_cast<Heigan::boss_heigan::boss_heiganAI*>(boss->GetAI());
     if (!boss_ai || boss_ai->events.Empty())
     {
-        uint32 now = getMSTime();
-        Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
-        if (currentSpell)
-        {
-            uint32 spellId = currentSpell->m_spellInfo->Id;
-
-            if (spellId == SPELL_ERUPTION)
-            {
-                uint32 eruptId = boss->GetUInt32Value(UNIT_FIELD_CHANNEL_OBJECT);
-                if (eruptId != prev_erupt && now >= nextSafeTime)
-                {
-                    NextSafe();
-                    prev_erupt = eruptId;
-                    nextSafeTime = now + 5000;
-                }
-                curr_phase = 1;
-            }
-            else
-            {
-                curr_phase = 0;
-                ResetSafe();
-                prev_erupt = 0;
-            }
-        }
-        else
-        {
-            curr_phase = 0;
-            ResetSafe();
-            prev_erupt = 0;
-        }
-        prev_phase = curr_phase;
-        return true;
+        return false;
+        // Unit* eruptionTrigger = AI_VALUE2(Unit*, "find target", "world invisible trigger");
+        // if (!eruptionTrigger)
+        //     return true;
+        // uint32 currentTime = time(nullptr) * 1000;
+        // if (currentTime < nextSafeTime)
+        //     return true;
+        // NextSafe();
+        // nextSafeTime = currentTime + 4000;
+        // return true;
     }
 
     EventMap* eventMap = &boss_ai->events;
-    curr_phase = boss_ai->currentPhase;
+    uint32 curr_phase = boss_ai->currentPhase;
     uint32 curr_erupt = eventMap->GetNextEventTime(3);
     uint32 curr_dance = eventMap->GetNextEventTime(4);
     uint32 curr_timer = eventMap->GetTimer();
@@ -132,6 +110,12 @@ bool HeiganDanceAction::CalculateSafe()
 bool HeiganDanceMeleeAction::Execute(Event event)
 {
     CalculateSafe();
+    // if (!CalculateSafe())
+    //     return false;
+
+    // if (curr_safe >= waypoints.size())
+    //     ResetSafe();
+
     if (prev_phase == 0 && botAI->IsMainTank(bot) && !AI_VALUE2(bool, "has aggro", "boss target"))
     {
         return false;
@@ -144,6 +128,12 @@ bool HeiganDanceMeleeAction::Execute(Event event)
 bool HeiganDanceRangedAction::Execute(Event event)
 {
     CalculateSafe();
+    // if (!CalculateSafe())
+    //     return false;
+
+    // if (curr_safe >= waypoints.size())
+    //     ResetSafe();
+
     if (prev_phase != 1)
     {
         return MoveTo(bot->GetMapId(), platform.first, platform.second, 276.54f, false, false, false, false, MovementPriority::MOVEMENT_COMBAT);
