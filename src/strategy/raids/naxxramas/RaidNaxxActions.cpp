@@ -12,7 +12,7 @@
 
 bool GrobbulusGoBehindAction::Execute(Event event)
 {
-    Unit* boss = AI_VALUE2(Unit*, "boss target", "grobbulus");
+    Unit* boss = AI_VALUE(Unit*, "boss target");
     if (!boss || boss->isDead())
     {
         return false;
