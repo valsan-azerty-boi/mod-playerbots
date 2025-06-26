@@ -79,7 +79,6 @@ bool HeiganDanceAction::CalculateSafe()
     {
         return false;
     }
-
     EventMap* eventMap = &boss_ai->events;
     uint32 curr_phase = boss_ai->currentPhase;
     uint32 curr_erupt = eventMap->GetNextEventTime(3);
