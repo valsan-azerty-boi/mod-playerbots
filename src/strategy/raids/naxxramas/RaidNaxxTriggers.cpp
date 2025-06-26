@@ -57,7 +57,7 @@ bool BossEventTrigger<T>::IsActive()
 bool GrobbulusCloudTrigger::IsActive()
 {
     Unit* boss = AI_VALUE2(Unit*, "boss target", "grobbulus");
-    if (!boss || boss->isDead())
+    if (!boss)
     {
         return false;
     }

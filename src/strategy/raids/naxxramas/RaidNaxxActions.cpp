@@ -13,7 +13,7 @@
 bool GrobbulusGoBehindAction::Execute(Event event)
 {
     Unit* boss = AI_VALUE(Unit*, "boss target");
-    if (!boss || boss->isDead())
+    if (!boss)
     {
         return false;
     }
@@ -47,7 +47,7 @@ uint32 RotateAroundTheCenterPointAction::FindNearestWaypoint()
 uint32 GrobbulusRotateAction::GetCurrWaypoint()
 {
     Unit* boss = AI_VALUE(Unit*, "boss target");
-    if (!boss || boss->isDead())
+    if (!boss)
     {
         return false;
     }
@@ -70,7 +70,7 @@ uint32 GrobbulusRotateAction::GetCurrWaypoint()
 bool HeiganDanceAction::CalculateSafe()
 {
     Unit* boss = AI_VALUE2(Unit*, "find target", "heigan the unclean");
-    if (!boss || boss->isDead())
+    if (!boss)
     {
         return false;
     }
@@ -78,15 +78,6 @@ bool HeiganDanceAction::CalculateSafe()
     if (!boss_ai || boss_ai->events.Empty())
     {
         return false;
-        // Unit* eruptionTrigger = AI_VALUE2(Unit*, "find target", "world invisible trigger");
-        // if (!eruptionTrigger)
-        //     return true;
-        // uint32 currentTime = time(nullptr) * 1000;
-        // if (currentTime < nextSafeTime)
-        //     return true;
-        // NextSafe();
-        // nextSafeTime = currentTime + 4000;
-        // return true;
     }
 
     EventMap* eventMap = &boss_ai->events;
@@ -110,11 +101,6 @@ bool HeiganDanceAction::CalculateSafe()
 bool HeiganDanceMeleeAction::Execute(Event event)
 {
     CalculateSafe();
-    // if (!CalculateSafe())
-    //     return false;
-
-    // if (curr_safe >= waypoints.size())
-    //     ResetSafe();
 
     if (prev_phase == 0 && botAI->IsMainTank(bot) && !AI_VALUE2(bool, "has aggro", "boss target"))
     {
@@ -128,11 +114,6 @@ bool HeiganDanceMeleeAction::Execute(Event event)
 bool HeiganDanceRangedAction::Execute(Event event)
 {
     CalculateSafe();
-    // if (!CalculateSafe())
-    //     return false;
-
-    // if (curr_safe >= waypoints.size())
-    //     ResetSafe();
 
     if (prev_phase != 1)
     {
@@ -995,7 +976,7 @@ bool GluthPositionAction::Execute(Event event)
     {
         return false;
     }
-    bool raid25 = bot->GetRaidDifficulty() != RAID_DIFFICULTY_10MAN_NORMAL;
+    bool raid25 = bot->GetRaidDifficulty() == RAID_DIFFICULTY_25MAN_NORMAL;
     if (botAI->IsMainTank(bot) || botAI->IsAssistTankOfIndex(bot, 0))
     {
         if (AI_VALUE2(bool, "has aggro", "boss target"))
@@ -1060,7 +1041,7 @@ bool GluthSlowdownAction::Execute(Event event)
     {
         return false;
     }
-    bool raid25 = bot->GetRaidDifficulty() != RAID_DIFFICULTY_10MAN_NORMAL;
+    bool raid25 = bot->GetRaidDifficulty() == RAID_DIFFICULTY_25MAN_NORMAL;
     if (!raid25)
     {
         return false;

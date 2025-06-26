@@ -47,15 +47,7 @@ public:
                 return false;
             }
             _ai = dynamic_cast<BossAiType*>(_target->GetAI());
-            if (!_ai)
-            {
-                return false;
-            }
-            _event_map = &_ai->events;
-            if (!_event_map)
-            {
-                return false;
-            }
+            _event_map = !_ai ? &_dummy_event_map : &_ai->events;
         }
         if (!_event_map)
         {
@@ -78,6 +70,7 @@ protected:
     Unit* _unit = nullptr;
     Creature* _target = nullptr;
     BossAiType* _ai = nullptr;
+    EventMap _dummy_event_map;
     EventMap* _event_map = nullptr;
     uint32 _timer = 0;
 };
@@ -126,9 +119,6 @@ public:
     {
         if (!GenericBossHelper::UpdateBossAI())
         {
-            // if (_unit && SapphironTryFallback(_unit))
-            //     return true;
-
             return false;
         }
         uint32 nextEventGround = _event_map->GetNextEventTime(Sapphiron::EVENT_GROUND);
@@ -207,55 +197,6 @@ private:
     const uint32 POSITION_TIME_AFTER_LANDED = 5000;
     const uint32 EVENT_FLIGHT_INTERVAL = 45000;
     uint32 lastEventGround = 0;
-
-    bool SapphironTryFallback(Unit* boss)
-    {
-        return false; // Need to analyse crash here
-        // if (!boss)
-        // {
-        //     // LOG_ERROR("PlayerBots", "SapphironBossHelper TryFallback: called with null boss pointer");
-        //     return false;
-        // } 
-
-        // if (!boss->IsCreature() || boss->GetEntry() != 351018) // Sapphiron entry mod-individual-progression
-        // {
-        //     // LOG_ERROR("PlayerBots", "SapphironTryFallback: boss is not Sapphiron");
-        //     return false;
-        // }
-
-        // Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
-        // if (!currentSpell)
-        // {
-        //     // LOG_ERROR("PlayerBots", "SapphironBossHelper TryFallback: boss has no current spell");
-        //     return false;
-        // }
-
-        // if (!currentSpell->m_spellInfo)
-        // {
-        //     // LOG_ERROR("PlayerBots", "SapphironBossHelper TryFallback: currentSpell->m_spellInfo is null");
-        //     return false;
-        // }
-
-        // // assert(currentSpell && currentSpell->m_spellInfo);
-
-        // uint32 spellId = currentSpell->m_spellInfo->Id;
-        // switch (spellId)
-        // {
-        //     case 19983:  // SPELL_CLEAVE
-        //     case 15847:  // SPELL_TAIL_SWEEP
-        //     case 55697:  // SPELL_TAIL_SWEEP_10
-        //     case 55696:  // SPELL_TAIL_SWEEP_25
-        //     case 28542:  // SPELL_LIFE_DRAIN_10
-        //     case 55665:  // SPELL_LIFE_DRAIN_25
-        //     case 28560:  // SPELL_SUMMON_BLIZZARD
-        //     case 28526:  // SPELL_ICEBOLT_CAST
-        //     case 28522:  // SPELL_ICEBOLT_TRIGGER
-        //     case 28524:  // SPELL_FROST_EXPLOSION
-        //         return true;
-        //     default:
-        //         return false;
-        // }
-    }
 };
 
 class GluthBossHelper : public GenericBossHelper<Gluth::boss_gluth::boss_gluthAI>
@@ -298,9 +239,6 @@ public:
     {
         if (!GenericBossHelper::UpdateBossAI())
         {
-            if (_unit && HorsemenTryFallback(_unit))
-                return true;
-
             return false;
         }
         if (!bot->IsInCombat())
@@ -314,7 +252,7 @@ public:
             return true;
         }
         ladyAI = dynamic_cast<FourHorsemen::boss_four_horsemen::boss_four_horsemenAI*>(lady->GetAI());
-        if (!ladyAI)
+        if (!ladyAI || ladyAI->events.Empty())
         {
             return true;
         }
@@ -342,7 +280,7 @@ public:
     bool IsAttracter(Player* bot)
     {
         Difficulty diff = bot->GetRaidDifficulty();
-        if (diff != RAID_DIFFICULTY_10MAN_NORMAL)
+        if (diff == RAID_DIFFICULTY_25MAN_NORMAL)
         {
             return botAI->IsRangedDpsAssistantOfIndex(bot, 0) || botAI->IsHealAssistantOfIndex(bot, 0) ||
                    botAI->IsHealAssistantOfIndex(bot, 1) || botAI->IsHealAssistantOfIndex(bot, 2);
@@ -351,7 +289,7 @@ public:
     }
     void CalculatePosToGo(Player* bot)
     {
-        bool raid25 = bot->GetRaidDifficulty() != RAID_DIFFICULTY_10MAN_NORMAL;
+        bool raid25 = bot->GetRaidDifficulty() == RAID_DIFFICULTY_25MAN_NORMAL;
         if (!lady)
         {
             posToGo = 0;
@@ -407,56 +345,6 @@ protected:
     uint32 lastEventVoidZone = 0;
     uint32 voidZoneCounter = 0;
     int posToGo = 0;
-
-    bool HorsemenTryFallback(Unit* boss)
-    {
-        if (!boss)
-        {
-            // LOG_ERROR("PlayerBots", "FourhorsemanBossHelper TryFallback: called with null boss pointer");
-            return false;
-        } 
-
-        uint32 entry = boss->GetEntry();
-        if (!boss->IsCreature() || (entry != 351037 && entry != 351038 && entry != 351039 && entry != 351040)) // Horsemen entry mod-individual-progression
-        {
-            // LOG_ERROR("PlayerBots", "SapphironTryFallback: boss is not Sapphiron");
-            return false;
-        }
-
-        Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
-        if (!currentSpell)
-        {
-            // LOG_ERROR("PlayerBots", "FourhorsemanBossHelper TryFallback: boss has no current spell");
-            return false;
-        }
-
-        if (!currentSpell->m_spellInfo)
-        {
-            // LOG_ERROR("PlayerBots", "FourhorsemanBossHelper TryFallback: currentSpell->m_spellInfo is null");
-            return false;
-        }
-
-        // assert(currentSpell && currentSpell->m_spellInfo);
-
-        uint32 spellId = currentSpell->m_spellInfo->Id;
-        switch (spellId)
-        {
-            case 28832: // SPELL_MARK_OF_KORTHAZZ
-            case 28833: // SPELL_MARK_OF_BLAUMEUX
-            case 28834: // SPELL_MARK_OF_MOGRAINE
-            case 28835: // SPELL_MARK_OF_ZELIEK
-            case 28884: // SPELL_KORTHAZZ_METEOR
-            case 57374: // SPELL_BLAUMEUX_SHADOW_BOLT
-            case 28863: // SPELL_BLAUMEUX_VOID_ZONE
-            case 28883: // SPELL_ZELIEK_HOLY_WRATH
-            case 57376: // SPELL_ZELIEK_HOLY_BOLT
-            case 28882: // SPELL_RIVENDARE_UNHOLY_SHADOW
-            case 29061: // SPELL_SHIELDWALL
-                return true;
-            default:
-                return false;
-        }
-    }
 };
 
 class ThaddiusBossHelper : public GenericBossHelper<Thaddius::boss_thaddius::boss_thaddiusAI>
@@ -472,9 +360,6 @@ public:
     {
         if (!GenericBossHelper::UpdateBossAI())
         {
-            if (_unit && ThaddiusTryFallback(_unit))
-                return true;
-
             return false;
         }
         feugen = AI_VALUE2(Unit*, "find target", "feugen");
@@ -524,47 +409,6 @@ public:
 protected:
     Unit* feugen = nullptr;
     Unit* stalagg = nullptr;
-
-    bool ThaddiusTryFallback(Unit* boss)
-    {
-        if (!boss)
-        {
-            // LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: called with null boss pointer");
-            return false;
-        } 
-
-        if (!boss->IsCreature() || boss->GetEntry() != 351000) // Thaddius entry mod-individual-progression
-        {
-            // LOG_ERROR("PlayerBots", "SapphironTryFallback: boss is not Sapphiron");
-            return false;
-        }
-
-        Spell* currentSpell = boss->GetCurrentSpell(CURRENT_GENERIC_SPELL);
-        if (!currentSpell)
-        {
-            // LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: boss has no current spell");
-            return false;
-        }
-
-        if (!currentSpell->m_spellInfo)
-        {
-            // LOG_ERROR("PlayerBots", "ThaddiusBossHelper TryFallback: currentSpell->m_spellInfo is null");
-            return false;
-        }
-
-        // assert(currentSpell && currentSpell->m_spellInfo);
-
-        uint32 spellId = currentSpell->m_spellInfo->Id;
-        switch (spellId)
-        {
-            case 28089: // SPELL_POLARITY_SHIFT
-            case 28299: // SPELL_BALL_LIGHTNING
-            case 28167: // SPELL_CHAIN_LIGHTNING
-                return true;
-            default:
-                return false;
-        }
-    }
 };
 
 #endif
