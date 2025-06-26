@@ -101,7 +101,6 @@ bool HeiganDanceAction::CalculateSafe()
 bool HeiganDanceMeleeAction::Execute(Event event)
 {
     CalculateSafe();
-
     if (prev_phase == 0 && botAI->IsMainTank(bot) && !AI_VALUE2(bool, "has aggro", "boss target"))
     {
         return false;
@@ -114,7 +113,6 @@ bool HeiganDanceMeleeAction::Execute(Event event)
 bool HeiganDanceRangedAction::Execute(Event event)
 {
     CalculateSafe();
-
     if (prev_phase != 1)
     {
         return MoveTo(bot->GetMapId(), platform.first, platform.second, 276.54f, false, false, false, false, MovementPriority::MOVEMENT_COMBAT);

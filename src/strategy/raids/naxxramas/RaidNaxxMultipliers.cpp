@@ -44,7 +44,6 @@ float HeiganDanceMultiplier::GetValue(Action* action)
     auto* boss_ai = dynamic_cast<Heigan::boss_heigan::boss_heiganAI*>(boss->GetAI());
     if (!boss_ai || boss_ai->events.Empty())
     {
-        // TODO Fallback dance
         return 1.0f;
     }
     EventMap* eventMap = &boss_ai->events;
