@@ -46,7 +46,7 @@ uint32 RotateAroundTheCenterPointAction::FindNearestWaypoint()
 
 uint32 GrobbulusRotateAction::GetCurrWaypoint()
 {
-    Unit* boss = AI_VALUE(Unit*, "boss target");
+    Unit* boss = AI_VALUE2(Unit*, "boss target", "grobbulus");
     if (!boss)
     {
         return false;
