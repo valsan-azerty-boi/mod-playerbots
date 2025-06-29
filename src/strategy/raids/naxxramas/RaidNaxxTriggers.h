@@ -32,14 +32,12 @@ public:
     virtual bool IsActive();
 };
 
-template <class T>
 class BossEventTrigger : public Trigger
 {
 public:
-    BossEventTrigger(PlayerbotAI* ai, uint32 boss_entry, uint32 event_id, std::string name = "boss event")
+    BossEventTrigger(PlayerbotAI* ai, uint32 event_id, std::string name = "boss event")
         : Trigger(ai, name, 1)
     {
-        this->boss_entry = boss_entry;
         this->event_id = event_id;
         this->last_event_time = -1;
     }
@@ -49,10 +47,10 @@ protected:
     uint32 boss_entry, event_id, last_event_time;
 };
 
-class GrobbulusCloudTrigger : public BossEventTrigger<Grobbulus::boss_grobbulus::boss_grobbulusAI>
+class GrobbulusCloudTrigger : public BossEventTrigger
 {
 public:
-    GrobbulusCloudTrigger(PlayerbotAI* ai) : BossEventTrigger(ai, 15931, 2, "grobbulus cloud event") {}
+    GrobbulusCloudTrigger(PlayerbotAI* ai) : BossEventTrigger(ai, 2, "grobbulus cloud event") {}
     virtual bool IsActive();
 };
 

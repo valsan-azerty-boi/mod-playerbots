@@ -51,18 +51,28 @@ uint32 GrobbulusRotateAction::GetCurrWaypoint()
     {
         return false;
     }
-    auto* boss_ai = dynamic_cast<Grobbulus::boss_grobbulus::boss_grobbulusAI*>(boss->GetAI());
-    if (!boss_ai || boss_ai->events.Empty())
+    EventMap* eventMap = nullptr;
+    if (BossAI* bossAI = dynamic_cast<BossAI*>(boss->GetAI()))
     {
-        uint32 now = getMSTime();
-        if (now - lastFallbackSwitch >= 15000)
+        auto accessor = reinterpret_cast<BossAI_Accessor*>(bossAI);
+        if (!accessor->events.Empty())
         {
-            fallbackWaypoint = (fallbackWaypoint + 1) % intervals;
-            lastFallbackSwitch = now;
+            eventMap = &accessor->events;
         }
-        return fallbackWaypoint;
     }
-    EventMap* eventMap = &boss_ai->events;
+    if (!eventMap || eventMap->Empty())
+    {
+        if (ScriptedAI* scriptedAI = dynamic_cast<ScriptedAI*>(boss->GetAI()))
+        {
+            auto accessor = reinterpret_cast<ScriptedAI_Accessor*>(scriptedAI);
+            if (!accessor->events.Empty())
+                eventMap = &accessor->events;
+        }
+    }
+    if (!eventMap || eventMap->Empty())
+    {
+        return false;
+    }
     const uint32 event_time = eventMap->GetNextEventTime(2);
     return (event_time / 15000) % intervals;
 }

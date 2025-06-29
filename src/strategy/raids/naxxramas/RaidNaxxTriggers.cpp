@@ -27,21 +27,30 @@ bool MutatingInjectionRemovedTrigger::IsActive()
     return HasNoAuraTrigger::IsActive() && botAI->GetState() == BOT_STATE_COMBAT && botAI->IsRanged(bot);
 }
 
-template <class T>
-bool BossEventTrigger<T>::IsActive()
+bool BossEventTrigger::IsActive()
 {
-    Unit* boss = AI_VALUE(Unit*, "boss target");
-    if (!boss || boss->GetEntry() != boss_entry)
+    Unit* boss = AI_VALUE2(Unit*, "boss target", "grobbulus");
+    if (!boss)
     {
         return false;
     }
-    T* ai = dynamic_cast<T*>(boss->GetAI());
-    if (!ai)
+    EventMap* eventMap;
+    if (BossAI* bossAI = dynamic_cast<BossAI*>(boss->GetAI()))
     {
-        return false;
+        auto accessor = reinterpret_cast<BossAI_Accessor*>(bossAI);
+        if (!accessor->events.Empty())
+            eventMap = &accessor->events;
     }
-    EventMap* eventMap = &ai->events;
-    if (!eventMap)
+    if (!eventMap || eventMap->Empty())
+    {
+        if (ScriptedAI* scriptedAI = dynamic_cast<ScriptedAI*>(boss->GetAI()))
+        {
+            auto accessor = reinterpret_cast<ScriptedAI_Accessor*>(scriptedAI);
+            if (!accessor->events.Empty())
+                eventMap = &accessor->events;
+        }
+    }
+    if (!eventMap || eventMap->Empty())
     {
         return false;
     }
@@ -210,5 +219,3 @@ bool ThaddiusPhaseThaddiusTrigger::IsActive()
     }
     return helper.IsPhaseThaddius();
 }
-
-template bool BossEventTrigger<Grobbulus::boss_grobbulus::boss_grobbulusAI>::IsActive();
