@@ -86,7 +86,7 @@ uint32 GrobbulusRotateAction::GetCurrWaypoint()
     {
         return false;
     }
-    const uint32 event_time = eventMap->GetNextEventTime(2);
+    const uint32 event_time = eventMap->GetNextEventTime(2); // EVENT_DECEPIT_FEVER
     return (event_time / 15000) % intervals;
 }
 
@@ -139,8 +139,8 @@ bool HeiganDanceAction::CalculateSafe()
     {
         return false;
     }
-    uint32 curr_erupt = eventMap->GetNextEventTime(3);
-    uint32 curr_dance = eventMap->GetNextEventTime(4);
+    uint32 curr_erupt = eventMap->GetNextEventTime(3); // EVENT_ERUPT_SECTION
+    uint32 curr_dance = eventMap->GetNextEventTime(4); // EVENT_SWITCH_PHASE
     if ((curr_phase == 0 && curr_dance - curr_timer >= 85000) || (curr_phase == 1 && curr_dance - curr_timer >= 40000))
     {
         ResetSafe();

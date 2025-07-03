@@ -24,8 +24,6 @@
 float GrobbulusMultiplier::GetValue(Action* action)
 {
     Unit* boss = AI_VALUE2(Unit*, "find target", "grobbulus");
-    // || (boss->GetEntry() != 15931 // Default Azerothcore
-    //     && boss->GetEntry() != 351003)) // mod-individual-progression
     if (!boss || boss->isDead())
     {
         return 1.0f;
@@ -40,9 +38,6 @@ float GrobbulusMultiplier::GetValue(Action* action)
 float HeiganDanceMultiplier::GetValue(Action* action)
 {
     Unit* boss = AI_VALUE2(Unit*, "find target", "heigan the unclean");
-    // if (!boss
-    //     || (boss->GetEntry() != 15936 // Default Azerothcore
-    //         && boss->GetEntry() != 351005)) // mod-individual-progression
     if (!boss || boss->isDead())
     {
         return 1.0f;
@@ -89,8 +84,8 @@ float HeiganDanceMultiplier::GetValue(Action* action)
     {
         return 1.0f;
     }
-    uint32 curr_dance = eventMap->GetNextEventTime(4);
-    uint32 curr_erupt = eventMap->GetNextEventTime(3);
+    uint32 curr_dance = eventMap->GetNextEventTime(4); // EVENT_SWITCH_PHASE
+    uint32 curr_erupt = eventMap->GetNextEventTime(3); // EVENT_ERUPT_SECTION
     if (dynamic_cast<CombatFormationMoveAction*>(action) ||
         dynamic_cast<CastDisengageAction*>(action) ||
         dynamic_cast<CastBlinkBackAction*>(action) )

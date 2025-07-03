@@ -113,7 +113,7 @@ public:
     const std::pair<float, float> center = {3716.19f, -5106.58f};
     const std::pair<float, float> tank_pos = {3709.19f, -5104.86f};
     const std::pair<float, float> assist_tank_pos = {3746.05f, -5112.74f};
-    bool IsPhaseOne() { return _event_map->GetNextEventTime(Kelthuzad::EVENT_PHASE_2) != 0; }
+    bool IsPhaseOne() { return _event_map->GetNextEventTime(4) != 0; } // EVENT_PHASE_2
     bool IsPhaseTwo() { return !IsPhaseOne(); }
     Unit* GetAnyShadowFissure()
     {
@@ -148,11 +148,11 @@ public:
     SapphironBossHelper(PlayerbotAI* botAI) : GenericBossHelper(botAI, "sapphiron") {}
     bool UpdateBossAI() override
     {
-        if (!GenericBossHelper::UpdateBossAI() || _event_map->GetTimer() > 1000000)
+        if (!GenericBossHelper::UpdateBossAI())
         {
             return false;
         }
-        uint32 nextEventGround = _event_map->GetNextEventTime(Sapphiron::EVENT_GROUND);
+        uint32 nextEventGround = _event_map->GetNextEventTime(13); // EVENT_GROUND
         if (nextEventGround && nextEventGround != lastEventGround)
             lastEventGround = nextEventGround;
         return true;
@@ -161,10 +161,9 @@ public:
     bool IsPhaseFlight() { return !IsPhaseGround(); }
     bool JustLanded()
     {
-        return (_event_map->GetNextEventTime(Sapphiron::EVENT_FLIGHT_START) - _timer) >=
-               EVENT_FLIGHT_INTERVAL - POSITION_TIME_AFTER_LANDED;
+        return (_event_map->GetNextEventTime(6) - _timer) >= EVENT_FLIGHT_INTERVAL - POSITION_TIME_AFTER_LANDED; // EVENT_FLIGHT_START
     }
-    bool WaitForExplosion() { return _event_map->GetNextEventTime(Sapphiron::EVENT_FLIGHT_SPELL_EXPLOSION); }
+    bool WaitForExplosion() { return _event_map->GetNextEventTime(10); } // EVENT_FLIGHT_SPELL_EXPLOSION
     bool FindPosToAvoidChill(std::vector<float>& dest)
     {
         Aura* aura = botAI->GetAura("chill", bot);
@@ -245,7 +244,7 @@ public:
     GluthBossHelper(PlayerbotAI* botAI) : GenericBossHelper(botAI, "gluth") {}
     bool BeforeDecimate()
     {
-        uint32 decimate = _event_map->GetNextEventTime(Gluth::EVENT_DECIMATE);
+        uint32 decimate = _event_map->GetNextEventTime(3); // EVENT_DECIMATE
         return decimate && decimate - _timer <= 3000;
     }
     bool JustStartCombat() { return _timer < 10000; }
@@ -268,7 +267,7 @@ public:
     FourhorsemanBossHelper(PlayerbotAI* botAI) : GenericBossHelper(botAI, "sir zeliek") {}
     bool UpdateBossAI() override
     {
-        if (!GenericBossHelper::UpdateBossAI() || _event_map->GetTimer() > 1000000)
+        if (!GenericBossHelper::UpdateBossAI())
         {
             return false;
         }
@@ -288,7 +287,7 @@ public:
             return true;
         }
         const char* typeName = typeid(*ladyBossAi).name();
-        if (std::string(typeName).find("_40") != std::string::npos)
+        if (std::string(typeName).find("boss_four_horsemen_40") != std::string::npos)
         {
             auto* ladyRealAi = reinterpret_cast<BossAiFourhorsemen40*>(lady->GetAI());
             if (ladyRealAi)
@@ -318,7 +317,7 @@ public:
         {
             return true;
         }
-        const uint32 voidZone = ladyEvent->GetNextEventTime(FourHorsemen::EVENT_SECONDARY_SPELL);
+        const uint32 voidZone = ladyEvent->GetNextEventTime(3); // EVENT_SECONDARY_SPELL
         if (voidZone && lastEventVoidZone != voidZone)
         {
             voidZoneCounter++;
@@ -417,7 +416,7 @@ public:
     ThaddiusBossHelper(PlayerbotAI* botAI) : GenericBossHelper(botAI, "thaddius") {}
     bool UpdateBossAI() override
     {
-        if (!GenericBossHelper::UpdateBossAI() || _event_map->GetTimer() > 1000000)
+        if (!GenericBossHelper::UpdateBossAI())
         {
             return false;
         }

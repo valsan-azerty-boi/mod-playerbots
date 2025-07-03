@@ -31,10 +31,12 @@ struct BossAiGluth40 : BossAI
 {
     EventMap events;
     SummonList summons;
+    InstanceScript* pInstance;
 };
 
 struct BossAiThaddius40 : BossAI
 {
+    InstanceScript* pInstance;
     EventMap events;
     SummonList summons;
     uint32 summonTimer{};
@@ -47,18 +49,20 @@ struct BossAiRazuvious40 : BossAI
 {
     EventMap events;
     SummonList summons;
+    InstanceScript* pInstance;
 };
 
 struct BossAiFourhorsemen40 : BossAI
 {
     EventMap events;
-    uint8 currentWaypoint{};
-    uint8 movementPhase{};
+    InstanceScript* pInstance;
     uint8 horsemanId;
+    bool doneFirstShieldWall;
 };
 
 struct BossAiLoatheb40 : BossAI
 {
+    InstanceScript* pInstance;
     uint8 doomCounter;
     EventMap events;
     SummonList summons;
@@ -67,6 +71,7 @@ struct BossAiLoatheb40 : BossAI
 struct BossAiSapphiron40 : BossAI
 {
     EventMap events;
+    InstanceScript* pInstance;
     uint8 iceboltCount{};
     uint32 spawnTimer{};
     GuidList blockList;
@@ -77,6 +82,8 @@ struct BossAiKelthuzad40 : BossAI
 {
     EventMap events;
     SummonList summons;
+    InstanceScript* pInstance;
+    bool _justSpawned;
 };
 
 #endif

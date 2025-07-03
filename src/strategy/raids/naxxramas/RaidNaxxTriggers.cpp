@@ -20,8 +20,6 @@ bool AuraRemovedTrigger::IsActive()
 bool MutatingInjectionRemovedTrigger::IsActive()
 {
     Unit* boss = AI_VALUE2(Unit*, "find target", "grobbulus");
-    // || (boss->GetEntry() != 15931 // Default Azerothcore
-    //     && boss->GetEntry() != 351003)) // mod-individual-progression
     if (!boss || boss->isDead())
     {
         return false;
