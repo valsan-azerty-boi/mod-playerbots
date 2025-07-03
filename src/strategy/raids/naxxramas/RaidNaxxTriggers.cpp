@@ -60,8 +60,8 @@ bool GrobbulusCloudTrigger::IsActive()
 {
     Unit* boss = AI_VALUE(Unit*, "boss target");
     if (!boss 
-        || (boss->GetEntry() != boss_entry // Default Azerothcore 15931 Grobbulus
-            && boss->GetEntry() != boss_entry_secondary)) // mod-individual-progression 351003 Grobbulus
+        || (boss->GetEntry() != boss_entry // Default Azerothcore Grobbulus (15931)
+            && boss->GetEntry() != boss_entry_secondary)) // mod-individual-progression Grobbulus (351003)
     {
         return false;
     }

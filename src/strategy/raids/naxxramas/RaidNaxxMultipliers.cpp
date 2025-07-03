@@ -345,7 +345,7 @@ float GluthGenericMultiplier::GetValue(Action* action)
     {
         Unit* target = AI_VALUE(Unit*, "current target");
         if (target && !target->isDead() 
-                && (target->GetEntry() == Gluth::NPC_ZOMBIE_CHOW  // Default Azerothcore Zombie Chow
+                && (target->GetEntry() == 16360  // Default Azerothcore Zombie Chow
                     || target->GetEntry() == 351069)) // mod-individual-progression Zombie Chow
         {
             return 0.0f;

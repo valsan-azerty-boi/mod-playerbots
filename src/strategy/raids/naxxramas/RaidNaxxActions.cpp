@@ -15,8 +15,8 @@ bool GrobbulusGoBehindAction::Execute(Event event)
 {
     Unit* boss = AI_VALUE(Unit*, "boss target");
     if (!boss 
-        || (boss->GetEntry() != 15931 // Default Azerothcore
-            && boss->GetEntry() != 351003)) // mod-individual-progression
+        || (boss->GetEntry() != 15931 // Default Azerothcore Grobbulus
+            && boss->GetEntry() != 351003)) // mod-individual-progression Grobbulus
     {
         return false;
     }
@@ -51,7 +51,7 @@ uint32 GrobbulusRotateAction::GetCurrWaypoint()
 {
     Unit* boss = AI_VALUE(Unit*, "boss target");
     if (!boss 
-        || (boss->GetEntry() != 15931  // AzerothCore Grobbulus
+        || (boss->GetEntry() != 15931  // Default AzerothCore Grobbulus
             && boss->GetEntry() != 351003)) // mod-individual-progression Grobbulus
     {
         return false;

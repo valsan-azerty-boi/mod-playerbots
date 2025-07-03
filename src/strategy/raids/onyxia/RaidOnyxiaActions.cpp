@@ -99,8 +99,8 @@ bool RaidOnyxiaKillWhelpsAction::Execute(Event event)
     Unit* currentTarget = AI_VALUE(Unit*, "current target");
     // If already attacking a whelp, don't swap targets
     if (currentTarget
-        && (currentTarget->GetEntry() == 11262 // AzerothCore Npc Onyxian Whelp
-            || currentTarget->GetEntry() == 301001)) // mod-individual-progression Npc Onyxian Whelp
+        && (currentTarget->GetEntry() == 11262 // Default AzerothCore Onyxian Whelp
+            || currentTarget->GetEntry() == 301001)) // mod-individual-progression Onyxian Whelp
     {
         return false;
     }
@@ -111,8 +111,8 @@ bool RaidOnyxiaKillWhelpsAction::Execute(Event event)
         if (!unit || !unit->IsAlive() || !unit->IsInWorld())
             continue;
 
-        if (unit->GetEntry() == 11262 // AzerothCore Npc Onyxian Whelp
-            || currentTarget->GetEntry() == 301001) // mod-individual-progression Npc Onyxian Whelp
+        if (unit->GetEntry() == 11262 // Default AzerothCore Onyxian Whelp
+            || currentTarget->GetEntry() == 301001) // mod-individual-progression Onyxian Whelp
         {
             // bot->Yell("Attacking Whelps!", LANG_UNIVERSAL);
             return Attack(unit);
