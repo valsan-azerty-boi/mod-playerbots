@@ -1,3 +1,7 @@
+/*
+ * Cast intended Naxxramas 40 struct for mod-individual-progression Naxx classes
+ */
+
 #ifndef _PLAYERBOT_RAIDNAXXAI40_H
 #define _PLAYERBOT_RAIDNAXXAI40_H
 

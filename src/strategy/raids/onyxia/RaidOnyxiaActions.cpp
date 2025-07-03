@@ -112,7 +112,7 @@ bool RaidOnyxiaKillWhelpsAction::Execute(Event event)
             continue;
 
         if (unit->GetEntry() == 11262 // Default AzerothCore Onyxian Whelp
-            || currentTarget->GetEntry() == 301001) // mod-individual-progression Onyxian Whelp
+            || unit->GetEntry() == 301001) // mod-individual-progression Onyxian Whelp
         {
             // bot->Yell("Attacking Whelps!", LANG_UNIVERSAL);
             return Attack(unit);
