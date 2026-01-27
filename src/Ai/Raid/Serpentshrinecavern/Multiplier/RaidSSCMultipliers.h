@@ -91,6 +91,14 @@ public:
     virtual float GetValue(Action* action);
 };
 
+class LeotherasTheBlindFocusOnInnerDemonMultiplier : public Multiplier
+{
+public:
+    LeotherasTheBlindFocusOnInnerDemonMultiplier(
+        PlayerbotAI* botAI) : Multiplier(botAI, "leotheras the blind focus on inner demon") {}
+    virtual float GetValue(Action* action);
+};
+
 class LeotherasTheBlindWaitForDpsMultiplier : public Multiplier
 {
 public:
@@ -177,11 +185,11 @@ public:
 
 // Lady Vashj <Coilfang Matron>
 
-class LadyVashjDelayBloodlustAndHeroismMultiplier : public Multiplier
+class LadyVashjDelayCooldownsMultiplier : public Multiplier
 {
 public:
-    LadyVashjDelayBloodlustAndHeroismMultiplier(
-        PlayerbotAI* botAI) : Multiplier(botAI, "lady vashj delay bloodlust and heroism") {}
+    LadyVashjDelayCooldownsMultiplier(
+        PlayerbotAI* botAI) : Multiplier(botAI, "lady vashj delay cooldowns") {}
     virtual float GetValue(Action* action);
 };
 

@@ -3,6 +3,16 @@
 
 #include "Trigger.h"
 
+// General
+
+class SerpentShrineCavernBotIsNotInCombatTrigger : public Trigger
+{
+public:
+    SerpentShrineCavernBotIsNotInCombatTrigger(
+        PlayerbotAI* botAI) : Trigger(botAI, "serpent shrine cavern bot is not in combat") {}
+    bool IsActive() override;
+};
+
 // Trash
 
 class UnderbogColossusSpawnedToxicPoolAfterDeathTrigger : public Trigger
@@ -139,6 +149,14 @@ public:
     bool IsActive() override;
 };
 
+class LeotherasTheBlindOnlyWarlockShouldTankDemonFormTrigger : public Trigger
+{
+public:
+    LeotherasTheBlindOnlyWarlockShouldTankDemonFormTrigger(
+        PlayerbotAI* botAI) : Trigger(botAI, "leotheras the blind only warlock should tank demon form") {}
+    bool IsActive() override;
+};
+
 class LeotherasTheBlindBossTransformedIntoDemonFormTrigger : public Trigger
 {
 public:
@@ -171,11 +189,11 @@ public:
     bool IsActive() override;
 };
 
-class LeotherasTheBlindInnerDemonCheatTrigger : public Trigger
+class LeotherasTheBlindInnerDemonHasAwakenedTrigger : public Trigger
 {
 public:
-    LeotherasTheBlindInnerDemonCheatTrigger(
-        PlayerbotAI* botAI) : Trigger(botAI, "leotheras the blind inner demon cheat") {}
+    LeotherasTheBlindInnerDemonHasAwakenedTrigger(
+        PlayerbotAI* botAI) : Trigger(botAI, "leotheras the blind inner demon has awakened") {}
     bool IsActive() override;
 };
 
@@ -295,14 +313,6 @@ public:
     bool IsActive() override;
 };
 
-class MorogrimTidewalkerEncounterResetTrigger : public Trigger
-{
-public:
-    MorogrimTidewalkerEncounterResetTrigger(
-        PlayerbotAI* botAI) : Trigger(botAI, "morogrim tidewalker encounter reset") {}
-    bool IsActive() override;
-};
-
 // Lady Vashj <Coilfang Matron>
 
 class LadyVashjBossEngagedByMainTankTrigger : public Trigger
@@ -353,6 +363,14 @@ public:
     bool IsActive() override;
 };
 
+class LadyVashjCoilfangStriderIsApproachingTrigger : public Trigger
+{
+public:
+    LadyVashjCoilfangStriderIsApproachingTrigger(
+        PlayerbotAI* botAI) : Trigger(botAI, "lady vashj coilfang strider is approaching") {}
+    bool IsActive() override;
+};
+
 class LadyVashjTaintedElementalCheatTrigger : public Trigger
 {
 public:
@@ -377,6 +395,14 @@ public:
     bool IsActive() override;
 };
 
+class LadyVashjNeedToResetCorePassingTrackersTrigger : public Trigger
+{
+public:
+    LadyVashjNeedToResetCorePassingTrackersTrigger(
+        PlayerbotAI* botAI) : Trigger(botAI, "lady vashj need to reset core passing trackers") {}
+    bool IsActive() override;
+};
+
 class LadyVashjToxicSporebatsAreSpewingPoisonCloudsTrigger : public Trigger
 {
 public:
@@ -390,14 +416,6 @@ class LadyVashjBotIsEntangledInToxicSporesOrStaticChargeTrigger : public Trigger
 public:
     LadyVashjBotIsEntangledInToxicSporesOrStaticChargeTrigger(
         PlayerbotAI* botAI) : Trigger(botAI, "lady vashj bot is entangled in toxic spores or static charge") {}
-    bool IsActive() override;
-};
-
-class LadyVashjNeedToManageTrackersTrigger : public Trigger
-{
-public:
-    LadyVashjNeedToManageTrackersTrigger(
-        PlayerbotAI* botAI) : Trigger(botAI, "lady vashj need to manage trackers") {}
     bool IsActive() override;
 };
 

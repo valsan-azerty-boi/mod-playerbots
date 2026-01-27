@@ -38,11 +38,6 @@ namespace TempestKeepHelpers
         // Hunter
         SPELL_MISDIRECTION              = 35079,
 
-        // Mage
-        SPELL_POLYMORPH_SHEEP           = 12826,
-        SPELL_POLYMORPH_TURTLE          = 28271,
-        SPELL_POLYMORPH_PIG             = 28272,
-
         // Priest
         SPELL_FEAR_WARD                 =  6346,
     };
@@ -109,6 +104,7 @@ namespace TempestKeepHelpers
     void MarkTargetWithDiamond(Player* bot, Unit* target);
     void MarkTargetWithCross(Player* bot, Unit* target);
     void SetRtiTarget(PlayerbotAI* botAI, const std::string& rtiName, Unit* target);
+    bool IsInstanceTimerManager(PlayerbotAI* botAI, Player* bot);
     Unit* GetFirstAliveUnitByEntry(PlayerbotAI* botAI, uint32 entry);
     Unit* GetNearestPlayerInRadius(Player* bot, float radius);
     Unit* GetNearestNonTankPlayerInRadius(Player* bot, float radius);
@@ -157,14 +153,16 @@ namespace TempestKeepHelpers
 
     // Kael'thas Sunstrider <Lord of the Blood Elves>
     extern const Position SANGUINAR_TANK_POSITION;
+    extern const Position SANGUINAR_WAITING_POSITION;
     extern const Position TELONICUS_TANK_POSITION;
+    extern const Position TELONICUS_WAITING_POSITION;
+    extern const Position CAPERNIAN_WAITING_POSITION;
     extern const Position ADVISOR_HEAL_POSITION;
     extern const Position KAELTHAS_WEAPON_STACK_POSITION;
     extern const Position KAELTHAS_AXE_TANK_POSITION;
     extern const Position KAELTHAS_BOW_TANK_POSITION;
     extern const Position KAELTHAS_TANK_POSITION;
     extern std::unordered_map<uint32, time_t> advisorDpsWaitTimer;
-    bool IsKaelthasInstanceTimerManager(PlayerbotAI* botAI, Player* bot);
     Player* GetCapernianTank(PlayerbotAI* botAI, Player* bot);
     Player* GetNetherstrandLongbowTank(PlayerbotAI* botAI, Player* bot);
     bool IsAnyLegendaryWeaponDead(PlayerbotAI* botAI, Player* bot);

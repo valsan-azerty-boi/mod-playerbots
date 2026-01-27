@@ -5,6 +5,16 @@
 #include "AttackAction.h"
 #include "MovementActions.h"
 
+// General
+
+class SerpentShrineCavernEraseTimersAndTrackersAction : public Action
+{
+public:
+    SerpentShrineCavernEraseTimersAndTrackersAction(
+        PlayerbotAI* botAI, std::string const name = "serpent shrine cavern erase timers and trackers") : Action(botAI, name) {}
+    bool Execute(Event event) override;
+};
+
 // Trash
 
 class UnderbogColossusEscapeToxicPoolAction : public MovementAction
@@ -153,6 +163,14 @@ public:
     bool Execute(Event event) override;
 };
 
+class LeotherasTheBlindMeleeTanksDontAttackDemonFormAction : public Action
+{
+public:
+    LeotherasTheBlindMeleeTanksDontAttackDemonFormAction(
+        PlayerbotAI* botAI, std::string const name = "leotheras the blind melee tanks don't attack demon form") : Action(botAI, name) {}
+    bool Execute(Event event) override;
+};
+
 class LeotherasTheBlindRunAwayFromWhirlwindAction : public MovementAction
 {
 public:
@@ -169,12 +187,16 @@ public:
     bool Execute(Event event) override;
 };
 
-class LeotherasTheBlindInnerDemonCheatAction : public AttackAction
+class LeotherasTheBlindDestroyInnerDemonAction : public AttackAction
 {
 public:
-    LeotherasTheBlindInnerDemonCheatAction(
-        PlayerbotAI* botAI, std::string const name = "leotheras the blind inner demon cheat") : AttackAction(botAI, name) {}
+    LeotherasTheBlindDestroyInnerDemonAction(
+        PlayerbotAI* botAI, std::string const name = "leotheras the blind destroy inner demon") : AttackAction(botAI, name) {}
     bool Execute(Event event) override;
+
+private:
+    bool HandleFeralTankStrategy(Unit* innerDemon);
+    bool HandleHealerStrategy(Unit* innerDemon);
 };
 
 class LeotherasTheBlindFinalPhaseAssignDpsPriorityAction : public AttackAction
@@ -297,14 +319,6 @@ public:
     bool Execute(Event event) override;
 };
 
-class MorogrimTidewalkerResetPhaseTransitionStepsAction : public Action
-{
-public:
-    MorogrimTidewalkerResetPhaseTransitionStepsAction(
-        PlayerbotAI* botAI, std::string const name = "morogrim tidewalker reset phase transition steps") : Action(botAI, name) {}
-    bool Execute(Event event) override;
-};
-
 // Lady Vashj <Coilfang Matron>
 
 class LadyVashjMainTankPositionBossAction : public AttackAction
@@ -414,6 +428,13 @@ public:
     bool Execute(Event event) override;
 };
 
+class LadyVashjEraseCorePassingTrackersAction : public Action
+{
+public:
+    LadyVashjEraseCorePassingTrackersAction(PlayerbotAI* botAI, std::string const name = "lady vashj erase core passing trackers") : Action(botAI, name) {}
+    bool Execute(Event event) override;
+};
+
 class LadyVashjAvoidToxicSporesAction : public MovementAction
 {
 public:
@@ -430,13 +451,6 @@ class LadyVashjUseFreeActionAbilitiesAction : public Action
 {
 public:
     LadyVashjUseFreeActionAbilitiesAction(PlayerbotAI* botAI, std::string const name = "lady vashj use free action abilities") : Action(botAI, name) {}
-    bool Execute(Event event) override;
-};
-
-class LadyVashjManageTrackersAction : public Action
-{
-public:
-    LadyVashjManageTrackersAction(PlayerbotAI* botAI, std::string const name = "lady vashj manage trackers") : Action(botAI, name) {}
     bool Execute(Event event) override;
 };
 

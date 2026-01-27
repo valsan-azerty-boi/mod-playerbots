@@ -3,6 +3,10 @@
 
 void RaidSSCStrategy::InitTriggers(std::vector<TriggerNode*>& triggers)
 {
+    // General
+    triggers.push_back(new TriggerNode("serpent shrine cavern bot is not in combat", {
+        NextAction("serpent shrine cavern erase timers and trackers", ACTION_EMERGENCY + 11) }));
+
     // Trash Mobs
     triggers.push_back(new TriggerNode("underbog colossus spawned toxic pool after death", {
         NextAction("underbog colossus escape toxic pool", ACTION_EMERGENCY + 10) }));
@@ -55,6 +59,9 @@ void RaidSSCStrategy::InitTriggers(std::vector<TriggerNode*>& triggers)
     triggers.push_back(new TriggerNode("leotheras the blind boss transformed into demon form", {
         NextAction("leotheras the blind demon form tank attack boss", ACTION_EMERGENCY + 6) }));
 
+    triggers.push_back(new TriggerNode("leotheras the blind only warlock should tank demon form", {
+        NextAction("leotheras the blind melee tanks don't attack demon form", ACTION_RAID + 1) }));
+
     triggers.push_back(new TriggerNode("leotheras the blind boss engaged by ranged", {
         NextAction("leotheras the blind position ranged", ACTION_RAID + 1) }));
 
@@ -62,16 +69,16 @@ void RaidSSCStrategy::InitTriggers(std::vector<TriggerNode*>& triggers)
         NextAction("leotheras the blind run away from whirlwind", ACTION_EMERGENCY + 1) }));
 
     triggers.push_back(new TriggerNode("leotheras the blind bot has too many chaos blast stacks", {
-        NextAction("leotheras the blind melee dps run away from boss", ACTION_EMERGENCY + 7) }));
+        NextAction("leotheras the blind melee dps run away from boss", ACTION_EMERGENCY + 6) }));
 
-    triggers.push_back(new TriggerNode("leotheras the blind inner demon cheat", {
-        NextAction("leotheras the blind inner demon cheat", ACTION_EMERGENCY + 6) }));
+    triggers.push_back(new TriggerNode("leotheras the blind inner demon has awakened", {
+        NextAction("leotheras the blind destroy inner demon", ACTION_EMERGENCY + 7) }));
 
     triggers.push_back(new TriggerNode("leotheras the blind entered final phase", {
-        NextAction("leotheras the blind final phase assign dps priority", ACTION_RAID + 2) }));
+        NextAction("leotheras the blind final phase assign dps priority", ACTION_RAID + 1) }));
 
     triggers.push_back(new TriggerNode("leotheras the blind demon form tank needs aggro", {
-        NextAction("leotheras the blind misdirect boss to demon form tank", ACTION_RAID + 3) }));
+        NextAction("leotheras the blind misdirect boss to demon form tank", ACTION_RAID + 2) }));
 
     triggers.push_back(new TriggerNode("leotheras the blind boss wipes aggro upon phase change", {
         NextAction("leotheras the blind manage dps wait timers", ACTION_EMERGENCY + 10) }));
@@ -111,9 +118,6 @@ void RaidSSCStrategy::InitTriggers(std::vector<TriggerNode*>& triggers)
     triggers.push_back(new TriggerNode("morogrim tidewalker pulling boss", {
         NextAction("morogrim tidewalker misdirect boss to main tank", ACTION_RAID + 1) }));
 
-    triggers.push_back(new TriggerNode("morogrim tidewalker encounter reset", {
-        NextAction("morogrim tidewalker reset phase transition steps", ACTION_RAID + 2) }));
-
     // Lady Vashj <Coilfang Matron>
     triggers.push_back(new TriggerNode("lady vashj boss engaged by main tank", {
         NextAction("lady vashj main tank position boss", ACTION_RAID + 1) }));
@@ -140,9 +144,14 @@ void RaidSSCStrategy::InitTriggers(std::vector<TriggerNode*>& triggers)
     triggers.push_back(new TriggerNode("lady vashj tainted core is unusable", {
         NextAction("lady vashj destroy tainted core", ACTION_EMERGENCY + 1) }));
 
+    triggers.push_back(new TriggerNode("lady vashj need to reset core passing trackers", {
+        NextAction("lady vashj erase core passing trackers", ACTION_EMERGENCY + 10) }));
+
     triggers.push_back(new TriggerNode("lady vashj adds spawn in phase 2 and phase 3", {
-        NextAction("lady vashj assign phase 2 and phase 3 dps priority", ACTION_RAID + 1),
-        NextAction("lady vashj misdirect strider to first assist tank", ACTION_EMERGENCY + 1),
+        NextAction("lady vashj assign phase 2 and phase 3 dps priority", ACTION_RAID + 1) }));
+
+    triggers.push_back(new TriggerNode("lady vashj coilfang strider is approaching", {
+        NextAction("lady vashj misdirect strider to first assist tank", ACTION_EMERGENCY + 2),
         NextAction("lady vashj tank attack and move away strider", ACTION_EMERGENCY + 1) }));
 
     triggers.push_back(new TriggerNode("lady vashj toxic sporebats are spewing poison clouds", {
@@ -150,9 +159,6 @@ void RaidSSCStrategy::InitTriggers(std::vector<TriggerNode*>& triggers)
 
     triggers.push_back(new TriggerNode("lady vashj bot is entangled in toxic spores or static charge", {
         NextAction("lady vashj use free action abilities", ACTION_EMERGENCY + 7) }));
-
-    triggers.push_back(new TriggerNode("lady vashj need to manage trackers", {
-        NextAction("lady vashj manage trackers", ACTION_EMERGENCY + 10) }));
 }
 
 void RaidSSCStrategy::InitMultipliers(std::vector<Multiplier*>& multipliers)
@@ -174,6 +180,7 @@ void RaidSSCStrategy::InitMultipliers(std::vector<Multiplier*>& multipliers)
     multipliers.push_back(new LeotherasTheBlindAvoidWhirlwindMultiplier(botAI));
     multipliers.push_back(new LeotherasTheBlindDisableTankActionsMultiplier(botAI));
     multipliers.push_back(new LeotherasTheBlindMeleeDpsAvoidChaosBlastMultiplier(botAI));
+    multipliers.push_back(new LeotherasTheBlindFocusOnInnerDemonMultiplier(botAI));
     multipliers.push_back(new LeotherasTheBlindWaitForDpsMultiplier(botAI));
     multipliers.push_back(new LeotherasTheBlindDelayBloodlustAndHeroismMultiplier(botAI));
 
@@ -190,7 +197,7 @@ void RaidSSCStrategy::InitMultipliers(std::vector<Multiplier*>& multipliers)
     multipliers.push_back(new MorogrimTidewalkerMaintainPhase2StackingMultiplier(botAI));
 
     // Lady Vashj <Coilfang Matron>
-    multipliers.push_back(new LadyVashjDelayBloodlustAndHeroismMultiplier(botAI));
+    multipliers.push_back(new LadyVashjDelayCooldownsMultiplier(botAI));
     multipliers.push_back(new LadyVashjMaintainPhase1RangedSpreadMultiplier(botAI));
     multipliers.push_back(new LadyVashjStaticChargeStayAwayFromGroupMultiplier(botAI));
     multipliers.push_back(new LadyVashjDoNotLootTheTaintedCoreMultiplier(botAI));

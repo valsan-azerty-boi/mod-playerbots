@@ -9,6 +9,10 @@ class RaidTempestKeepTriggerContext : public NamedObjectContext<Trigger>
 public:
     RaidTempestKeepTriggerContext()
     {
+        // General
+        creators["tempest keep bot is not in combat"] =
+            &RaidTempestKeepTriggerContext::tempest_keep_bot_is_not_in_combat;
+
         // Trash
         creators["crimson hand centurion casts arcane volley"] =
             &RaidTempestKeepTriggerContext::crimson_hand_centurion_casts_arcane_volley;
@@ -20,8 +24,11 @@ public:
         creators["al'ar boss is flying between platforms"] =
             &RaidTempestKeepTriggerContext::alar_boss_is_flying_between_platforms;
 
-        creators["al'ar boss spawns embers of alar"] =
-            &RaidTempestKeepTriggerContext::alar_boss_spawns_embers_of_alar;
+        creators["al'ar embers of al'ar explode upon death"] =
+            &RaidTempestKeepTriggerContext::alar_embers_of_alar_explode_upon_death;
+
+        creators["al'ar killing embers of al'ar damages boss"] =
+            &RaidTempestKeepTriggerContext::alar_killing_embers_of_alar_damages_boss;
 
         creators["al'ar incoming flame quills"] =
             &RaidTempestKeepTriggerContext::alar_incoming_flame_quills;
@@ -39,6 +46,9 @@ public:
             &RaidTempestKeepTriggerContext::alar_strategy_changes_between_phases;
 
         // Void Reaver
+        creators["void reaver boss casts pounding"] =
+            &RaidTempestKeepTriggerContext::void_reaver_boss_casts_pounding;
+
         creators["void reaver knock away reduces tank aggro"] =
             &RaidTempestKeepTriggerContext::void_reaver_knock_away_reduces_tank_aggro;
 
@@ -58,8 +68,11 @@ public:
         creators["high astromancer solarian solarium priests spawned"] =
             &RaidTempestKeepTriggerContext::high_astromancer_solarian_solarium_priests_spawned;
 
-        creators["high astromancer solarian transformed into voidwalker"] =
-            &RaidTempestKeepTriggerContext::high_astromancer_solarian_transformed_into_voidwalker;
+        creators["high astromancer solarian boss transformed into voidwalker"] =
+            &RaidTempestKeepTriggerContext::high_astromancer_solarian_boss_transformed_into_voidwalker;
+
+        creators["high astromancer solarian boss casts psychic scream"] =
+            &RaidTempestKeepTriggerContext::high_astromancer_solarian_boss_casts_psychic_scream;
 
         // Kael'thas Sunstrider <Lord of the Blood Elves>
         creators["kael'thas sunstrider thaladred is fixated on bot"] =
@@ -83,8 +96,8 @@ public:
         creators["kael'thas sunstrider telonicus engaged by first assist tank"] =
             &RaidTempestKeepTriggerContext::kaelthas_sunstrider_telonicus_engaged_by_first_assist_tank;
 
-        creators["kael'thas sunstrider need dedicated bots for sanguinar and telonicus in phase 3"] =
-            &RaidTempestKeepTriggerContext::kaelthas_sunstrider_need_dedicated_bots_for_sanguinar_and_telonicus_in_phase_3;
+        creators["kael'thas sunstrider bots have specific roles in phase 3"] =
+            &RaidTempestKeepTriggerContext::kaelthas_sunstrider_bots_have_specific_roles_in_phase_3;
 
         creators["kael'thas sunstrider determining advisor kill order"] =
             &RaidTempestKeepTriggerContext::kaelthas_sunstrider_determining_advisor_kill_order;
@@ -94,6 +107,12 @@ public:
 
         creators["kael'thas sunstrider legendary weapons are alive"] =
             &RaidTempestKeepTriggerContext::kaelthas_sunstrider_legendary_weapons_are_alive;
+
+        creators["kael'thas sunstrider legendary axe casts whirlwind"] =
+            &RaidTempestKeepTriggerContext::kaelthas_sunstrider_legendary_axe_casts_whirlwind;
+
+        creators["kael'thas sunstrider legendary bow casts multishot"] =
+            &RaidTempestKeepTriggerContext::kaelthas_sunstrider_legendary_bow_casts_multishot;
 
         creators["kael'thas sunstrider legendary weapons are dead and lootable"] =
             &RaidTempestKeepTriggerContext::kaelthas_sunstrider_legendary_weapons_are_dead_and_lootable;
@@ -121,6 +140,10 @@ public:
     }
 
 private:
+    // General
+    static Trigger* tempest_keep_bot_is_not_in_combat(
+        PlayerbotAI* botAI) { return new TempestKeepBotIsNotInCombatTrigger(botAI); }
+
     // Trash
     static Trigger* crimson_hand_centurion_casts_arcane_volley(
         PlayerbotAI* botAI) { return new CrimsonHandCenturionCastsArcaneVolleyTrigger(botAI); }
@@ -132,8 +155,11 @@ private:
     static Trigger* alar_boss_is_flying_between_platforms(
         PlayerbotAI* botAI) { return new AlarBossIsFlyingBetweenPlatformsTrigger(botAI); }
 
-    static Trigger* alar_boss_spawns_embers_of_alar(
-        PlayerbotAI* botAI) { return new AlarBossSpawnsEmbersOfAlarTrigger(botAI); }
+    static Trigger* alar_embers_of_alar_explode_upon_death(
+        PlayerbotAI* botAI) { return new AlarEmbersOfAlarExplodeUponDeathTrigger(botAI); }
+
+    static Trigger* alar_killing_embers_of_alar_damages_boss(
+        PlayerbotAI* botAI) { return new AlarKillingEmbersOfAlarDamagesBossTrigger(botAI); }
 
     static Trigger* alar_incoming_flame_quills(
         PlayerbotAI* botAI) { return new AlarIncomingFlameQuillsTrigger(botAI); }
@@ -151,6 +177,9 @@ private:
         PlayerbotAI* botAI) { return new AlarStrategyChangesBetweenPhasesTrigger(botAI); }
 
     // Void Reaver
+    static Trigger* void_reaver_boss_casts_pounding(
+        PlayerbotAI* botAI) { return new VoidReaverBossCastsPoundingTrigger(botAI); }
+
     static Trigger* void_reaver_knock_away_reduces_tank_aggro(
         PlayerbotAI* botAI) { return new VoidReaverKnockAwayReducesTankAggroTrigger(botAI); }
 
@@ -170,8 +199,11 @@ private:
     static Trigger* high_astromancer_solarian_solarium_priests_spawned(
         PlayerbotAI* botAI) { return new HighAstromancerSolarianSolariumPriestsSpawnedTrigger(botAI); }
 
-    static Trigger* high_astromancer_solarian_transformed_into_voidwalker(
-        PlayerbotAI* botAI) { return new HighAstromancerSolarianTransformedIntoVoidwalkerTrigger(botAI); }
+    static Trigger* high_astromancer_solarian_boss_transformed_into_voidwalker(
+        PlayerbotAI* botAI) { return new HighAstromancerSolarianBossTransformedIntoVoidwalkerTrigger(botAI); }
+
+    static Trigger* high_astromancer_solarian_boss_casts_psychic_scream(
+        PlayerbotAI* botAI) { return new HighAstromancerSolarianBossCastsPsychicScreamTrigger(botAI); }
 
     // Kael'thas Sunstrider <Lord of the Blood Elves>
     static Trigger* kaelthas_sunstrider_thaladred_is_fixated_on_bot(
@@ -195,8 +227,8 @@ private:
     static Trigger* kaelthas_sunstrider_telonicus_engaged_by_first_assist_tank(
         PlayerbotAI* botAI) { return new KaelthasSunstriderTelonicusEngagedByFirstAssistTankTrigger(botAI); }
 
-    static Trigger* kaelthas_sunstrider_need_dedicated_bots_for_sanguinar_and_telonicus_in_phase_3(
-        PlayerbotAI* botAI) { return new KaelthasSunstriderNeedDedicatedBotsForSanguinarAndTelonicusInPhase3Trigger(botAI); }
+    static Trigger* kaelthas_sunstrider_bots_have_specific_roles_in_phase_3(
+        PlayerbotAI* botAI) { return new KaelthasSunstriderBotsHaveSpecificRolesInPhase3Trigger(botAI); }
 
     static Trigger* kaelthas_sunstrider_determining_advisor_kill_order(
         PlayerbotAI* botAI) { return new KaelthasSunstriderDeterminingAdvisorKillOrderTrigger(botAI); }
@@ -206,6 +238,12 @@ private:
 
     static Trigger* kaelthas_sunstrider_legendary_weapons_are_alive(
         PlayerbotAI* botAI) { return new KaelthasSunstriderLegendaryWeaponsAreAliveTrigger(botAI); }
+
+    static Trigger* kaelthas_sunstrider_legendary_axe_casts_whirlwind(
+        PlayerbotAI* botAI) { return new KaelthasSunstriderLegendaryAxeCastsWhirlwindTrigger(botAI); }
+
+    static Trigger* kaelthas_sunstrider_legendary_bow_casts_multishot(
+        PlayerbotAI* botAI) { return new KaelthasSunstriderLegendaryBowCastsMultiShotTrigger(botAI); }
 
     static Trigger* kaelthas_sunstrider_legendary_weapons_are_dead_and_lootable(
         PlayerbotAI* botAI) { return new KaelthasSunstriderLegendaryWeaponsAreDeadAndLootableTrigger(botAI); }

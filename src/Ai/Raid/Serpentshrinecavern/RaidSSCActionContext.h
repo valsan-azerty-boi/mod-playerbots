@@ -9,6 +9,10 @@ class RaidSSCActionContext : public NamedObjectContext<Action>
 public:
     RaidSSCActionContext()
     {
+        // General
+        creators["serpent shrine cavern erase timers and trackers"] =
+            &RaidSSCActionContext::serpent_shrine_cavern_erase_timers_and_trackers;
+
         // Trash
         creators["underbog colossus escape toxic pool"] =
             &RaidSSCActionContext::underbog_colossus_escape_toxic_pool;
@@ -61,6 +65,9 @@ public:
         creators["leotheras the blind demon form tank attack boss"] =
             &RaidSSCActionContext::leotheras_the_blind_demon_form_tank_attack_boss;
 
+        creators["leotheras the blind melee tanks don't attack demon form"] =
+            &RaidSSCActionContext::leotheras_the_blind_melee_tanks_dont_attack_demon_form;
+
         creators["leotheras the blind position ranged"] =
             &RaidSSCActionContext::leotheras_the_blind_position_ranged;
 
@@ -70,8 +77,8 @@ public:
         creators["leotheras the blind melee dps run away from boss"] =
             &RaidSSCActionContext::leotheras_the_blind_melee_dps_run_away_from_boss;
 
-        creators["leotheras the blind inner demon cheat"] =
-            &RaidSSCActionContext::leotheras_the_blind_inner_demon_cheat;
+        creators["leotheras the blind destroy inner demon"] =
+            &RaidSSCActionContext::leotheras_the_blind_destroy_inner_demon;
 
         creators["leotheras the blind final phase assign dps priority"] =
             &RaidSSCActionContext::leotheras_the_blind_final_phase_assign_dps_priority;
@@ -117,9 +124,6 @@ public:
         creators["morogrim tidewalker phase 2 reposition ranged"] =
             &RaidSSCActionContext::morogrim_tidewalker_phase_2_reposition_ranged;
 
-        creators["morogrim tidewalker reset phase transition steps"] =
-            &RaidSSCActionContext::morogrim_tidewalker_reset_phase_transition_steps;
-
         // Lady Vashj <Coilfang Matron>
         creators["lady vashj main tank position boss"] =
             &RaidSSCActionContext::lady_vashj_main_tank_position_boss;
@@ -157,17 +161,21 @@ public:
         creators["lady vashj destroy tainted core"] =
             &RaidSSCActionContext::lady_vashj_destroy_tainted_core;
 
+        creators["lady vashj erase core passing trackers"] =
+            &RaidSSCActionContext::lady_vashj_erase_core_passing_trackers;
+
         creators["lady vashj avoid toxic spores"] =
             &RaidSSCActionContext::lady_vashj_avoid_toxic_spores;
 
         creators["lady vashj use free action abilities"] =
             &RaidSSCActionContext::lady_vashj_use_free_action_abilities;
-
-        creators["lady vashj manage trackers"] =
-            &RaidSSCActionContext::lady_vashj_manage_trackers;
     }
 
 private:
+    // General
+    static Action* serpent_shrine_cavern_erase_timers_and_trackers(
+        PlayerbotAI* botAI) { return new SerpentShrineCavernEraseTimersAndTrackersAction(botAI); }
+
     // Trash
     static Action* underbog_colossus_escape_toxic_pool(
         PlayerbotAI* botAI) { return new UnderbogColossusEscapeToxicPoolAction(botAI); }
@@ -220,6 +228,9 @@ private:
     static Action* leotheras_the_blind_demon_form_tank_attack_boss(
         PlayerbotAI* botAI) { return new LeotherasTheBlindDemonFormTankAttackBossAction(botAI); }
 
+    static Action* leotheras_the_blind_melee_tanks_dont_attack_demon_form(
+        PlayerbotAI* botAI) { return new LeotherasTheBlindMeleeTanksDontAttackDemonFormAction(botAI); }
+
     static Action* leotheras_the_blind_position_ranged(
         PlayerbotAI* botAI) { return new LeotherasTheBlindPositionRangedAction(botAI); }
 
@@ -229,8 +240,8 @@ private:
     static Action* leotheras_the_blind_melee_dps_run_away_from_boss(
         PlayerbotAI* botAI) { return new LeotherasTheBlindMeleeDpsRunAwayFromBossAction(botAI); }
 
-    static Action* leotheras_the_blind_inner_demon_cheat(
-        PlayerbotAI* botAI) { return new LeotherasTheBlindInnerDemonCheatAction(botAI); }
+    static Action* leotheras_the_blind_destroy_inner_demon(
+        PlayerbotAI* botAI) { return new LeotherasTheBlindDestroyInnerDemonAction(botAI); }
 
     static Action* leotheras_the_blind_misdirect_boss_to_demon_form_tank(
         PlayerbotAI* botAI) { return new LeotherasTheBlindMisdirectBossToDemonFormTankAction(botAI); }
@@ -276,9 +287,6 @@ private:
     static Action* morogrim_tidewalker_phase_2_reposition_ranged(
         PlayerbotAI* botAI) { return new MorogrimTidewalkerPhase2RepositionRangedAction(botAI); }
 
-    static Action* morogrim_tidewalker_reset_phase_transition_steps(
-        PlayerbotAI* botAI) { return new MorogrimTidewalkerResetPhaseTransitionStepsAction(botAI); }
-
     // Lady Vashj <Coilfang Matron>
     static Action* lady_vashj_main_tank_position_boss(
         PlayerbotAI* botAI) { return new LadyVashjMainTankPositionBossAction(botAI); }
@@ -316,14 +324,14 @@ private:
     static Action* lady_vashj_destroy_tainted_core(
         PlayerbotAI* botAI) { return new LadyVashjDestroyTaintedCoreAction(botAI); }
 
+    static Action* lady_vashj_erase_core_passing_trackers(
+        PlayerbotAI* botAI) { return new LadyVashjEraseCorePassingTrackersAction(botAI); }
+
     static Action* lady_vashj_avoid_toxic_spores(
         PlayerbotAI* botAI) { return new LadyVashjAvoidToxicSporesAction(botAI); }
 
     static Action* lady_vashj_use_free_action_abilities(
         PlayerbotAI* botAI) { return new LadyVashjUseFreeActionAbilitiesAction(botAI); }
-
-    static Action* lady_vashj_manage_trackers(
-        PlayerbotAI* botAI) { return new LadyVashjManageTrackersAction(botAI); }
 };
 
 #endif

@@ -42,10 +42,16 @@ namespace SerpentShrineCavernHelpers
         SPELL_INSIDIOUS_WHISPER      = 37676,
 
         // Lady Vashj <Coilfang Matron>
-        SPELL_FEAR_WARD               = 6346,
+        SPELL_FEAR_WARD              =  6346,
         SPELL_POISON_BOLT            = 38253,
         SPELL_STATIC_CHARGE          = 38280,
         SPELL_ENTANGLE               = 38316,
+
+        // Druid
+        SPELL_CAT_FORM               =   768,
+        SPELL_BEAR_FORM              =  5487,
+        SPELL_DIRE_BEAR_FORM         =  9634,
+        SPELL_TREE_OF_LIFE           = 33891,
 
         // Hunter
         SPELL_MISDIRECTION           = 35079,
@@ -54,8 +60,7 @@ namespace SerpentShrineCavernHelpers
         SPELL_SLOW                   = 31589,
 
         // Shaman
-        SPELL_GROUNDING_TOTEM_EFFECT  = 8178,
-        SPELL_FROST_SHOCK            = 25464,
+        SPELL_GROUNDING_TOTEM_EFFECT =  8178,
 
         // Warlock
         SPELL_CURSE_OF_EXHAUSTION    = 18223,
