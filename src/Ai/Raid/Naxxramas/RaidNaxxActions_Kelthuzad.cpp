@@ -45,7 +45,7 @@ bool KelthuzadChooseTargetAction::Execute(Event event)
         {
             continue;
         }
-        if (bot->GetDistance2d(unit) > sPlayerbotAIConfig->spellDistance)
+        if (bot->GetDistance2d(unit) > sPlayerbotAIConfig.spellDistance)
         {
             continue;
         }
