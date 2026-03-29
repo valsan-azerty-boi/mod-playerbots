@@ -20,8 +20,8 @@ public:
         creators["grobbulus move center"] = &RaidNaxxActionContext::grobbulus_move_center;
         creators["grobbulus move away"] = &RaidNaxxActionContext::grobbulus_move_away;
 
-        creators["heigan dance melee"] = &RaidNaxxActionContext::heigan_dance_melee;
-        creators["heigan dance ranged"] = &RaidNaxxActionContext::heigan_dance_ranged;
+        //creators["heigan dance melee"] = &RaidNaxxActionContext::heigan_dance_melee;
+        //creators["heigan dance ranged"] = &RaidNaxxActionContext::heigan_dance_ranged;
         creators["thaddius attack nearest pet"] = &RaidNaxxActionContext::thaddius_attack_nearest_pet;
         // creators["thaddius melee to place"] = &RaidNaxxActionContext::thaddius_tank_to_place;
         // creators["thaddius ranged to place"] = &RaidNaxxActionContext::thaddius_ranged_to_place;
@@ -31,8 +31,8 @@ public:
         creators["razuvious use obedience crystal"] = &RaidNaxxActionContext::razuvious_use_obedience_crystal;
         creators["razuvious target"] = &RaidNaxxActionContext::razuvious_target;
 
-        creators["horseman attract alternatively"] = &RaidNaxxActionContext::horseman_attract_alternatively;
-        creators["horseman attack in order"] = &RaidNaxxActionContext::horseman_attack_in_order;
+        creators["four horsemen attract alternatively"] = &RaidNaxxActionContext::four_horsemen_attract_alternatively;
+        creators["four horsemen attack in order"] = &RaidNaxxActionContext::four_horsemen_attack_in_order;
 
         creators["sapphiron ground position"] = &RaidNaxxActionContext::sapphiron_ground_position;
         creators["sapphiron flight position"] = &RaidNaxxActionContext::sapphiron_flight_position;
@@ -47,7 +47,7 @@ public:
         creators["gluth position"] = &RaidNaxxActionContext::gluth_position;
         creators["gluth slowdown"] = &RaidNaxxActionContext::gluth_slowdown;
 
-        creators["patchwerk ranged position"] = &RaidNaxxActionContext::patchwerk_ranged_position;
+        //creators["patchwerk ranged position"] = &RaidNaxxActionContext::patchwerk_ranged_position;
 
         creators["loatheb position"] = &RaidNaxxActionContext::loatheb_position;
         creators["loatheb choose target"] = &RaidNaxxActionContext::loatheb_choose_target;
@@ -56,10 +56,10 @@ public:
 private:
     static Action* go_behind_the_boss(PlayerbotAI* ai) { return new GrobbulusGoBehindAction(ai); }
     static Action* rotate_grobbulus(PlayerbotAI* ai) { return new GrobbulusRotateAction(ai); }
-    static Action* grobbulus_move_center(PlayerbotAI* ai) { return new GrobblulusMoveCenterAction(ai); }
+    static Action* grobbulus_move_center(PlayerbotAI* ai) { return new GrobbulusMoveCenterAction(ai); }
     static Action* grobbulus_move_away(PlayerbotAI* ai) { return new GrobbulusMoveAwayAction(ai); }
-    static Action* heigan_dance_melee(PlayerbotAI* ai) { return new HeiganDanceMeleeAction(ai); }
-    static Action* heigan_dance_ranged(PlayerbotAI* ai) { return new HeiganDanceRangedAction(ai); }
+    //static Action* heigan_dance_melee(PlayerbotAI* ai) { return new HeiganDanceMeleeAction(ai); }
+    //static Action* heigan_dance_ranged(PlayerbotAI* ai) { return new HeiganDanceRangedAction(ai); }
     static Action* thaddius_attack_nearest_pet(PlayerbotAI* ai) { return new ThaddiusAttackNearestPetAction(ai); }
     // static Action* thaddius_tank_to_place(PlayerbotAI* ai) { return new ThaddiusMeleeToPlaceAction(ai); }
     // static Action* thaddius_ranged_to_place(PlayerbotAI* ai) { return new ThaddiusRangedToPlaceAction(ai); }
@@ -70,11 +70,8 @@ private:
     {
         return new RazuviousUseObedienceCrystalAction(ai);
     }
-    static Action* horseman_attract_alternatively(PlayerbotAI* ai)
-    {
-        return new HorsemanAttractAlternativelyAction(ai);
-    }
-    static Action* horseman_attack_in_order(PlayerbotAI* ai) { return new HorsemanAttactInOrderAction(ai); }
+    static Action* four_horsemen_attract_alternatively(PlayerbotAI* ai) { return new FourHorsemenAttractAlternativelyAction(ai); }
+    static Action* four_horsemen_attack_in_order(PlayerbotAI* ai) { return new FourHorsemenAttackInOrderAction(ai); }
     // static Action* sapphiron_ground_main_tank_position(PlayerbotAI* ai) { return new
     // SapphironGroundMainTankPositionAction(ai); }
     static Action* sapphiron_ground_position(PlayerbotAI* ai) { return new SapphironGroundPositionAction(ai); }
@@ -87,7 +84,7 @@ private:
     static Action* gluth_choose_target(PlayerbotAI* ai) { return new GluthChooseTargetAction(ai); }
     static Action* gluth_position(PlayerbotAI* ai) { return new GluthPositionAction(ai); }
     static Action* gluth_slowdown(PlayerbotAI* ai) { return new GluthSlowdownAction(ai); }
-    static Action* patchwerk_ranged_position(PlayerbotAI* ai) { return new PatchwerkRangedPositionAction(ai); }
+    //static Action* patchwerk_ranged_position(PlayerbotAI* ai) { return new PatchwerkRangedPositionAction(ai); }
     static Action* loatheb_position(PlayerbotAI* ai) { return new LoathebPositionAction(ai); }
     static Action* loatheb_choose_target(PlayerbotAI* ai) { return new LoathebChooseTargetAction(ai); }
 };

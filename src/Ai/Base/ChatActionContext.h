@@ -188,6 +188,7 @@ public:
         creators["rtsc"] = &ChatActionContext::rtsc;
         creators["naxx chat shortcut"] = &ChatActionContext::naxx_chat_shortcut;
         creators["bwl chat shortcut"] = &ChatActionContext::bwl_chat_shortcut;
+        creators["naxx chat shortcut"] = &ChatActionContext::naxx_chat_shortcut;
         creators["tell estimated dps"] = &ChatActionContext::tell_estimated_dps;
         creators["join"] = &ChatActionContext::join;
         creators["lfg"] = &ChatActionContext::lfg;
