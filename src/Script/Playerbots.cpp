@@ -94,7 +94,7 @@ public:
 
     void OnPlayerLogin(Player* player) override
     {
-        if (!player->GetSession()->IsBot())
+        if (!player->GetSession()->IsBot() && player->GetSession()->GetSecurity() > SEC_PLAYER)
         {
             PlayerbotsMgr::instance().AddPlayerbotData(player, false);
             sRandomPlayerbotMgr.OnPlayerLogin(player);
