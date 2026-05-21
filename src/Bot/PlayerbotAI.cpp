@@ -15,6 +15,7 @@
 #include "ChannelMgr.h"
 #include "CharacterPackets.h"
 #include "ChatHelper.h"
+#include "CheckMountStateAction.h"
 #include "Common.h"
 #include "CreatureData.h"
 #include "EmoteAction.h"
@@ -54,9 +55,9 @@
 #include "Unit.h"
 #include "UpdateTime.h"
 #include "Vehicle.h"
-#include "../../../../src/server/scripts/Spells/spell_dk.cpp"
 
-const int SPELL_TITAN_GRIP = 49152;
+constexpr uint32 SPELL_TITAN_GRIP = 49152;
+constexpr uint32 SPELL_DK_FROST_PRESENCE = 48263;
 
 std::vector<std::string> PlayerbotAI::dispel_whitelist = {
     "mutating injection",
@@ -491,7 +492,7 @@ void PlayerbotAI::UpdateAIInternal([[maybe_unused]] uint32 elapsed, bool minimal
             continue;
         }
 
-        ChatReplyAction::ChatReplyDo(bot, it->m_type, it->m_guid1, it->m_guid2, it->m_msg, it->m_chanName, it->m_name);
+        ChatReplyAction::ChatReplyDo(bot, it->m_type, it->m_guid1, it->m_msg, it->m_chanName, it->m_name);
         it = chatReplies.erase(it);
     }
 
@@ -867,6 +868,7 @@ void PlayerbotAI::Reset(bool full)
     aiObjectContext->GetValue<Unit*>("current target")->Set(nullptr);
     aiObjectContext->GetValue<GuidVector>("prioritized targets")->Reset();
     aiObjectContext->GetValue<ObjectGuid>("pull target")->Set(ObjectGuid::Empty);
+    aiObjectContext->GetValue<ObjectGuid>("pull strategy target")->Set(ObjectGuid::Empty);
     aiObjectContext->GetValue<GuidPosition>("rpg target")->Set(GuidPosition());
     aiObjectContext->GetValue<LootObject>("loot target")->Set(LootObject());
     aiObjectContext->GetValue<uint32>("lfg proposal")->Set(0);
@@ -1364,6 +1366,17 @@ void PlayerbotAI::HandleBotOutgoingPacket(WorldPacket const& packet)
             // */
             return;
         }
+        case SMSG_DISMOUNT:
+        {
+            WorldPacket p(packet);
+            p.rpos(0);
+            ObjectGuid guid;
+            p >> guid.ReadAsPacked();
+            if (guid != bot->GetGUID())
+                return;
+            CheckMountStateAction::CompleteDismount(bot);
+            return;
+        }
         default:
             botOutgoingPacketHandlers.AddPacket(packet);
     }
@@ -1476,6 +1489,7 @@ void PlayerbotAI::DoNextAction(bool min)
         aiObjectContext->GetValue<Unit*>("current target")->Set(nullptr);
         aiObjectContext->GetValue<Unit*>("enemy player target")->Set(nullptr);
         aiObjectContext->GetValue<ObjectGuid>("pull target")->Set(ObjectGuid::Empty);
+        aiObjectContext->GetValue<ObjectGuid>("pull strategy target")->Set(ObjectGuid::Empty);
         aiObjectContext->GetValue<LootObject>("loot target")->Set(LootObject());
 
         ChangeEngine(BOT_STATE_DEAD);
@@ -1571,6 +1585,27 @@ void PlayerbotAI::ClearStrategies(BotState type)
     e->removeAllStrategies();
 }
 
+// Resets only the combat or non-combat engine: wipe strategies, repopulate with class/spec defaults,
+// re-apply current map's instance strategy (if any), and call Init() to rebuild trigger/action lists.
+void PlayerbotAI::SelectiveResetStrategies(BotState type)
+{
+    Engine* e = engines[type];
+    if (!e)
+        return;
+
+    e->removeAllStrategies();
+
+    if (type == BOT_STATE_COMBAT)
+        AiFactory::AddDefaultCombatStrategies(bot, this, e);
+    else if (type == BOT_STATE_NON_COMBAT)
+        AiFactory::AddDefaultNonCombatStrategies(bot, this, e);
+
+    if (sPlayerbotAIConfig.applyInstanceStrategies)
+        ApplyInstanceStrategies(bot->GetMapId());
+
+    e->Init();
+}
+
 std::vector<std::string> PlayerbotAI::GetStrategies(BotState type)
 {
     Engine* e = engines[type];
@@ -1584,11 +1619,12 @@ void PlayerbotAI::ApplyInstanceStrategies(uint32 mapId, bool tellMaster)
 {
     static const std::vector<std::string> allInstanceStrategies =
     {
-        "aq20", "bwl", "karazhan", "gruulslair", "icc", "magtheridon", "moltencore",
-        "naxx", "onyxia", "ssc", "tbc-ac", "tempestkeep", "ulduar", "voa", "wotlk-an", "wotlk-cos",
-        "wotlk-dtk", "wotlk-eoe", "wotlk-fos", "wotlk-gd", "wotlk-hol", "wotlk-hor",
-        "wotlk-hos", "wotlk-nex", "wotlk-occ", "wotlk-ok", "wotlk-os", "wotlk-pos",
-        "wotlk-toc", "wotlk-uk", "wotlk-up", "wotlk-vh", "zulaman"
+        "aq20", "bwl", "karazhan", "gruulslair", "hyjal", "icc", "magtheridon",
+        "moltencore", "naxx", "onyxia", "ssc", "tbc-ac", "tempestkeep", "ulduar",
+        "voa", "wotlk-an", "wotlk-cos", "wotlk-dtk", "wotlk-eoe", "wotlk-fos",
+        "wotlk-gd", "wotlk-hol", "wotlk-hor", "wotlk-hos", "wotlk-nex", "wotlk-occ",
+        "wotlk-ok", "wotlk-os", "wotlk-pos", "wotlk-toc", "wotlk-uk", "wotlk-up",
+        "wotlk-vh", "zulaman"
     };
 
     for (const std::string& strat : allInstanceStrategies)
@@ -1620,6 +1656,9 @@ void PlayerbotAI::ApplyInstanceStrategies(uint32 mapId, bool tellMaster)
             break;
         case 533:
             strategyName = "naxx";  // Naxxramas
+            break;
+        case 534:
+            strategyName = "hyjal";  // The Battle for Mount Hyjal (Hyjal Summit)
             break;
         case 544:
             strategyName = "magtheridon";  // Magtheridon's Lair
@@ -1814,7 +1853,7 @@ Strategy* PlayerbotAI::GetStrategy(std::string const name, BotState type)
     return engines[type] ? engines[type]->GetStrategy(name) : nullptr;
 }
 
-void PlayerbotAI::ResetStrategies(bool load)
+void PlayerbotAI::ResetStrategies(bool /*load*/)
 {
     for (uint8 i = 0; i < BOT_STATE_MAX; i++)
         engines[i]->removeAllStrategies();
